@@ -1,0 +1,10 @@
+.project
+**/*.classpath
+**/*.project
+**/*.settings
+**/*.prefs
+**/target
+**/*.class
+**/*.tern-project
+**/bin
+/target/
