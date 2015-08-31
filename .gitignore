@@ -8,3 +8,6 @@
 **/*.tern-project
 **/bin
 /target/
+/bower_components/
+/node_modules/
+npm-debug.log

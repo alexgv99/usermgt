@@ -1,0 +1,177 @@
+.cor::before,
+.cor::after {
+    border-radius: 5px;
+    color: white;
+}
+.cor.numero::before {
+    padding: 0 6px;
+    font-weight: bold;
+}
+.cor.texto::after {
+    margin-left: 5px;
+    padding: 0 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: bold;
+}
+.AZUL::before {
+    background-color: #1b75bb;
+    content: "5";
+}
+.texto.AZUL::after {
+    background-color: #1b75bb;
+    content: "Não urgente";
+}
+.VERDE::before {
+    background-color: #47B769;
+    content: "4";
+}
+.texto.VERDE::after {
+    background-color: #47B769;
+    content: "Pouco urgente";
+}
+.AMARELO::before {
+    background-color: #F5B717;
+    content: "3";
+}
+.texto.AMARELO::after {
+    background-color: #F5B717;
+    content: "Urgente";
+}
+.LARANJA::before {
+    background-color: #F5871F;
+    content: "2";
+}
+.texto.LARANJA::after {
+    background-color: #F5871F;
+    content: "Muito urgente";
+}
+.VERMELHO::before {
+    background-color: #EE3D5D;
+    content: "1";
+}
+.texto.VERMELHO::after {
+    background-color: #EE3D5D;
+    content: "Emergência";
+}
+.vazio::before {
+    content: url(../img/vazio.png);
+}
+.glyphicon-asterisk:before {
+    color: Red;
+    font-size: xx-small;
+}
+.vmiddle {
+    vertical-align: middle !important;
+}
+.infosecundaria {
+    color: #777;
+    font-size: 0.9em;
+    line-height: 1.5em;
+}
+.segundalinha {
+    font-size: 0.9em;
+}
+
+/* CORES 
+azul: 					#37699b
+cinza texto (preto): 	#4d4d4d
+cinza: 					#bdccd4
+cinza escuro: 			#82939e
+cinza claro (prata): 	#ebf0f2
+*/
+
+
+/*----------- TEMPLATE -----------*/
+
+
+/* Sticky footer styles
+-------------------------------------------------- */
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+body {
+    /* Margin bottom by footer height */
+    margin-bottom: 60px;
+}
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    /* Set the fixed height of the footer here */
+    height: 30px;
+}
+
+/*------------- MENU -------------*/
+
+
+/* RODAPÉ -------------------------------------- */
+
+.footer img {
+    margin-top: 10px;
+}
+.resumorisco,
+li {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.resumorisco > li {
+    padding-left: 1em;
+    text-indent: -.7em;
+    line-height: 1.6em;
+    margin-right: 2px;
+}
+.resumorisco > li > ul > li {
+    text-indent: -2em;
+}
+.resumorisco li:before {
+    content: "• ";
+    vertical-align: text-bottom;
+}
+@media print {
+    footer,
+    nav,
+    header,
+    .page-header,
+    .well {
+        display: none;
+    }
+    .cor {
+        font-weight: normal !important;
+        text-transform: none !important;
+        letter-spacing: normal !important;
+    }
+    .cor.numero::before {
+        font-weight: normal !important;
+        text-transform: none !important;
+        letter-spacing: normal !important;
+    }
+    .cor.texto::after {
+        font-weight: regular !important;
+        letter-spacing: normal !important;
+        margin-left: 0 !important;
+        padding: 0 !important;
+        text-transform: normal !important;
+    }
+}
+comprovante {
+    line-height: 1.6em;
+}
+.codbarras {
+    margin-top: 50px;
+}
+.labelgrupos {
+    font-weight: bold;
+    margin-bottom: 0;
+}
+.checkbox-inline.no_indent,
+.checkbox-inline.no_indent+.checkbox-inline.no_indent {
+    margin-left: 0;
+    margin-right: 10px;
+}
+.checkbox-inline.no_indent:last-child {
+    margin-right: 0;
+}
