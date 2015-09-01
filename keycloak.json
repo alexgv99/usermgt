@@ -1,7 +1,7 @@
 {
   "realm": "procempa",
   "realm-public-key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDHZ2zNWsZwsJE9qqKkbfcFmnaLUUL7X8rgPD28FR9RBcPQ3pXN8x+eshmEIYUc1SxSYrGUbJlXQAFci5sX6en0fGxrNTdLKRhmR50H7Teokrycvr3F6f8f3bAikVX6J3pQfrRV9HgAYugUFA5if9PgTHswSSyBJZgqcgw/oHd5ZQIDAQAB",
-  "auth-server-url": "http://lpmpa-des10:8080/auth",
+  "auth-server-url": "http://lpmpa-des10.procempa.com.br:8080/auth",
   "ssl-required": "external",
   "resource": "exemplo",
   "public-client": true,
