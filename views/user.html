@@ -1,6 +1,6 @@
 Pesquisa: <input ng-model="ctrl.pesquisa.nome">
-<input type="submit" ng-click="ctrl.pesquisaUser()">
+<input type="submit" ng-click="ctrl.searchUser()">
 
 <ul ng-repeat="user in ctrl.users">
-	<li>{{user.email}}</li>
+	<li><a ng-href="#/roles" ng-click="ctrl.selectUser(user);">{{user.email}}</a></li>
 </ul>

@@ -1,0 +1,11 @@
+<h1>Entrei na tela de roles para o user {{ctrl.user.email}}</h1>
+
+<h2>Realm Roles</h2>
+<ul ng-repeat="role in ctrl.realmRoles">
+	<li><input type="checkbox"> {{role.name}} {{role.composite ? ' (composta)' : ''}}</li>
+</ul>
+
+<h2>Client Roles</h2>
+<ul ng-repeat="role in ctrl.clientRoles">
+	<li><input type="checkbox"> {{role.name}} {{role.composite ? ' (composta)' : ''}}</li>
+</ul>

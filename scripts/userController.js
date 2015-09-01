@@ -16,8 +16,8 @@ app.controller('userController', ['factory', function(factory) {
 		factory.selectUser(angular.copy(user));
 	};
 
-	ctrl.pesquisaUser = function() {
-		factory.pesquisaUser(ctrl.pesquisa).then(
+	ctrl.searchUser = function() {
+		factory.searchUser(ctrl.pesquisa).then(
 			function(users) {
 				ctrl.users = users.data;
 				console.log(JSON.stringify(users.data, null, '\t'));

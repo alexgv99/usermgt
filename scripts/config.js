@@ -49,6 +49,11 @@ app.config(['$routeProvider', '$locationProvider', '$httpProvider', function ($r
 		controllerAs: 'ctrl',
 		templateUrl: 'views/user.html'
 	})
+	.when('/roles', {
+		controller: 'rolesController',
+		controllerAs: 'ctrl',
+		templateUrl: 'views/roles.html'
+	})
 	.otherwise({
 		redirectTo: '/user'
 	});
