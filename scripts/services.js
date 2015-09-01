@@ -32,21 +32,21 @@ app.factory('factory', ['$http', 'keycloakService', function($http, keycloakServ
 			factory.users = response;
 			return response;
 		});
-	}
+	};
 
 	factory.obtainClientRoles = function() {
 		return $http.get(urlBase + keycloakService.le().realm + '/clients/' + keycloakService.le().clientId + '/roles').then(function(response) {
 			factory.users = response;
 			return response;
 		});
-	}
+	};
 
 	factory.obtainRealmUsers = function() {
 		return $http.get(urlBase + keycloakService.le().realm + '/roles').then(function(response) {
 			factory.users = response;
 			return response;
 		});
-	}
+	};
 
 
 
