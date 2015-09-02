@@ -1,5 +1,5 @@
 /* globals angular, console */
-app.controller('rolesController', ['factory', function(factory) {
+app.controller('rolesController', ['factory', '$log', function(factory, $log) {
 	'use strict';
 
 	var ctrl = this;
@@ -13,7 +13,7 @@ app.controller('rolesController', ['factory', function(factory) {
 		factory.obtainRealmRoles().then(
 			function(roles) {
 				ctrl.realmRoles = roles.data;
-				console.log(JSON.stringify(roles.data, null, '\t'));
+				$log.log(JSON.stringify(roles.data, null, '\t'));
 			}
 		);
 	};
@@ -23,7 +23,7 @@ app.controller('rolesController', ['factory', function(factory) {
 		factory.obtainClientRoles().then(
 			function(roles) {
 				ctrl.clientRoles = roles.data;
-				console.log(JSON.stringify(roles.data, null, '\t'));
+				$log.log(JSON.stringify(roles.data, null, '\t'));
 			}
 		);
 	};

@@ -2,19 +2,19 @@
 var app = angular.module('usermgt-app', ['ui.bootstrap', 'ngRoute']);
 
 var auth = {};
-var logout = function(){
+var logout = function() {
 	console.log('*** LOGOUT');
 	auth.loggedIn = false;
 	auth.authz = null;
 	window.location = auth.logoutUrl;
 };
 
-app.run(['$rootScope', 'keycloakService', function ($rootScope, keycloakService) {
-	console.log("*** here");
+app.run(['$rootScope', 'keycloakService', '$log', function ($rootScope, keycloakService, $log) {
+	$log.log("*** here");
 	var keycloakAuth = new Keycloak('keycloak.json');
 	auth.loggedIn = false;
 	keycloakAuth.init({ onLoad: 'login-required' }).success(function () {
-		console.log('here login');
+		$log.log('here login');
 		auth.loggedIn = true;
 		auth.authz = keycloakAuth;
 		keycloakService.salva(keycloakAuth);
@@ -68,10 +68,9 @@ app.config(['$routeProvider', '$locationProvider', '$httpProvider', function ($r
 	$httpProvider.interceptors.push('authInterceptor');
 }]);
 
-app.factory('authInterceptor', function($q) {
+app.factory('authInterceptor', ['$q', function($q) {
 	return {
 		request: function (config) {
-//			console.log(JSON.stringify(config, null, "\t"));
 			var deferred = $q.defer();
 			if (auth && auth.authz && auth.authz.token) {
 				auth.authz.updateToken(5).success(function() {
@@ -86,15 +85,15 @@ app.factory('authInterceptor', function($q) {
 			return deferred.promise;
 		}
 	};
-});
+}]);
 
-app.factory('errorInterceptor', function($q) {
+app.factory('errorInterceptor', ['$q', '$log', function($q, $log) {
 	return function(promise) {
 		return promise.then(function(response) {
 			return response;
 		}, function(response) {
 			if (response.status == 401) {
-				console.log('session timeout?');
+				$log.log('session timeout?');
 				logout();
 			} else if (response.status == 403) {
 				alert("Forbidden");
@@ -110,4 +109,4 @@ app.factory('errorInterceptor', function($q) {
 			return $q.reject(response);
 		});
 	};
-});
+}]);

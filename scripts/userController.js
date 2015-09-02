@@ -1,7 +1,7 @@
 /* globals angular, console */
 var app = angular.module('usermgt-app');
 
-app.controller('userController', ['factory', function(factory) {
+app.controller('userController', ['factory', '$log', function(factory, $log) {
 	'use strict';
 
 	var ctrl = this;
@@ -20,7 +20,7 @@ app.controller('userController', ['factory', function(factory) {
 		factory.searchUser(ctrl.pesquisa).then(
 			function(users) {
 				ctrl.users = users.data;
-				console.log(JSON.stringify(users.data, null, '\t'));
+				$log.log(JSON.stringify(users.data, null, '\t'));
 			}
 		);
 	};
