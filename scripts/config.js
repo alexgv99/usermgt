@@ -1,5 +1,5 @@
 /* globals angular, Keycloak, keycloak, location, console, alert, window, document */
-var app = angular.module('usermgt-app', ['ui.bootstrap', 'ngRoute']);
+var app = angular.module('usermgt-app', ['ui.bootstrap', 'ngRoute', 'ngStorage']);
 
 var auth = {};
 var logout = function(){
@@ -17,7 +17,7 @@ app.run(['$rootScope', 'keycloakService', function ($rootScope, keycloakService)
 		console.log('here login');
 		auth.loggedIn = true;
 		auth.authz = keycloakAuth;
-		keycloakService.salva(keycloakAuth);
+		keycloakService.set(keycloakAuth);
 		auth.logoutUrl = keycloakAuth.authServerUrl + "/realms/" + keycloakAuth.realm + "/tokens/logout?redirect_uri=http://localhost:8080";
 		$rootScope.usuario = {};
 		$rootScope.usuario.login = auth.authz.idTokenParsed.preferred_username;
@@ -30,16 +30,29 @@ app.run(['$rootScope', 'keycloakService', function ($rootScope, keycloakService)
 
 }]);
 
-app.service('keycloakService', function() {
-	this.kcObj = null;
-	this.salva = function(obj) {
-		this.kcObj = obj;
+app.service('keycloakService', ['$localStorage', function($localStorage) {
+	this.set = function(obj) {
+		$localStorage.keycloakObject = obj;
 	};
-	this.le = function() {
-		return this.kcObj;
+	this.get = function() {
+		return $localStorage.keycloakObject;
 	};
+	this.reset = function() {
+		delete $localStorage.keycloakObject;
+	};
+}]);
 
-});
+app.service('selectedUserService', ['$localStorage', function($localStorage) {
+	this.set = function(obj) {
+		$localStorage.selectedUser = obj;
+	};
+	this.get = function() {
+		return $localStorage.selectedUser;
+	};
+	this.reset = function() {
+		delete $localStorage.selectedUser;
+	};
+}]);
 
 app.config(['$routeProvider', '$locationProvider', '$httpProvider', function ($routeProvider, $locationProvider, $httpProvider) {
 

@@ -1,7 +1,7 @@
 /* globals angular, console */
 var app = angular.module('usermgt-app');
 
-app.controller('userController', ['factory', function(factory) {
+app.controller('userController', ['$scope', 'factory', function($scope, factory) {
 	'use strict';
 
 	var ctrl = this;
@@ -30,5 +30,11 @@ app.controller('userController', ['factory', function(factory) {
 		ctrl.users = [];
 		factory.limpaFiltros();
 	};
+
+	$scope.$on('carregou-dados-usuario', function(event, dados) {
+		console.log("tá rodando o evento no controller users");
+	});
+
+
 
 }]);
