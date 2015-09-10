@@ -1,4 +1,5 @@
 app.controller('rolesController', ['$scope', 'logService', 'factory', 'selectedUserService', function($scope, log, factory, selectedUserService) {
+
 	'use strict';
 
 	var ctrl = this;
