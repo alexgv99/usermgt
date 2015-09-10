@@ -1,5 +1,4 @@
-/* globals angular, console */
-app.controller('rolesController', ['$scope', 'factory', 'selectedUserService', function($scope, factory, selectedUserService) {
+app.controller('rolesController', ['$scope', 'logService', 'factory', 'selectedUserService', function($scope, log, factory, selectedUserService) {
 	'use strict';
 
 	var ctrl = this;
@@ -14,8 +13,8 @@ app.controller('rolesController', ['$scope', 'factory', 'selectedUserService', f
 	ctrl.obtainRealmRoles = function() {
 		factory.obtainRealmRoles().then(
 			function(roles) {
-				ctrl.realmRoles = roles.data;
-				//console.log(JSON.stringify(roles.data, null, '\t'));
+				ctrl.realmRoles = roles;
+				log.debug('rolesController.js - objeto realmRoles: \n' + JSON.stringify(roles, null, '\t'));
 			}
 		);
 	};
@@ -24,8 +23,8 @@ app.controller('rolesController', ['$scope', 'factory', 'selectedUserService', f
 	ctrl.obtainClientRoles = function() {
 		factory.obtainClientRoles().then(
 			function(roles) {
-				ctrl.clientRoles = roles.data;
-				//console.log(JSON.stringify(roles.data, null, '\t'));
+				ctrl.clientRoles = roles;
+				log.debug('rolesController.js - objeto clientRoles: \n' + JSON.stringify(roles, null, '\t'));
 			}
 		);
 	};
@@ -34,25 +33,25 @@ app.controller('rolesController', ['$scope', 'factory', 'selectedUserService', f
 	ctrl.obtainRealmUsers = function() {
 		factory.obtainRealmUsers().then(
 			function(users) {
-				ctrl.realmUsers = users.data;
-				//console.log(JSON.stringify(users.data, null, '\t'));
+				ctrl.realmUsers = users;
+				log.debug('rolesController.js - objeto realmUsers: \n' + JSON.stringify(users, null, '\t'));
 			}
 		);
 	};
-//	ctrl.obtainRealmUsers();
+	ctrl.obtainRealmUsers();
 
 	ctrl.obtainUserRoles = function() {
 		factory.obtainUserRoles().then(
 			function(roles) {
-				ctrl.userRoles = roles.data;
-				console.log(JSON.stringify(roles.data, null, '\t'));
+				ctrl.userRoles = roles;
+				log.debug('rolesController.js - objeto userRoles: \n' + JSON.stringify(roles, null, '\t'));
 			}
 		);
 	};
 	ctrl.obtainUserRoles();
 
 	$scope.$on('carregou-dados-usuario', function(event, dados) {
-		console.log("tá rodando o evento no controller roles");
+		log.debug('rolesController.js - tá rodando o evento no controller roles');
 	});
 
 	ctrl.resetSelectedUser = function() {

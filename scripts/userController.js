@@ -1,7 +1,4 @@
-/* globals angular, console */
-var app = angular.module('usermgt-app');
-
-app.controller('userController', ['$scope', 'factory', function($scope, factory) {
+app.controller('userController', ['$scope', 'logService', 'factory', function($scope, log, factory) {
 	'use strict';
 
 	var ctrl = this;
@@ -19,8 +16,8 @@ app.controller('userController', ['$scope', 'factory', function($scope, factory)
 	ctrl.searchUser = function() {
 		factory.searchUser(ctrl.pesquisa).then(
 			function(users) {
-				ctrl.users = users.data;
-				console.log(JSON.stringify(users.data, null, '\t'));
+				ctrl.users = users;
+				log.debug('userController.js - objeto users obtido na pesquisa pelo nome "' + ctrl.pesquisa.nome + '": \n' + JSON.stringify(users, null, '\t'));
 			}
 		);
 	};
@@ -32,7 +29,7 @@ app.controller('userController', ['$scope', 'factory', function($scope, factory)
 	};
 
 	$scope.$on('carregou-dados-usuario', function(event, dados) {
-		console.log("tá rodando o evento no controller users");
+		log.debug("userController.js - tá rodando o evento no controller users");
 	});
 
 
