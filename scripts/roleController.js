@@ -1,53 +1,34 @@
-app.controller('roleController', ['$scope', 'logService', 'httpService', 'selectedUserService', function($scope, log, httpService, selectedUserService) {
+app.controller('roleController', [
+	'$routeParams',
+	'logService',
+	'selectedUserService',
+	'httpService',
+	'user',
+	'realmRoles',
+	'clientRoles',
+	function($routeParams, log, selectedUserService, httpService, user, realmRoles, clientRoles) {
 
-	'use strict';
+		'use strict';
 
-	var ctrl = this;
+		var ctrl = this;
 
-	ctrl.user = httpService.user;
-	ctrl.realmRoles = [];
-	ctrl.clientRoles = [];
-	ctrl.realmUsers = [];
-	ctrl.userRoles = [];
-	ctrl.client = {};
+		ctrl.user = user.data;
+		ctrl.realmRoles = realmRoles.data;
+		ctrl.clientRoles = clientRoles.data;
+		ctrl.userRoles = [];
 
-	ctrl.obtainRealmRoles = function() {
-		httpService.obtainRealmRoles().then(
-			function(roles) {
-				ctrl.realmRoles = roles;
-				log.debug('roleController.js - objeto realmRoles: \n' + JSON.stringify(roles, null, '\t'));
-			}
-		);
-	};
-	ctrl.obtainRealmRoles();
+		//a carga desta roles precisou ficar dentro do controller porque
+		//para carregá-las o usuário selecionado já precisa ter sido carregado,
+		//o que ocorre no "resolve" do $routeProvider
+		ctrl.obtainUserRoles = function() {
+			httpService.obtainUserRoles().then(function(roles) {
+				ctrl.userRoles = roles.data;
+			});
+		};
+		ctrl.obtainUserRoles();
 
-	ctrl.obtainClientRoles = function() {
-		httpService.obtainClientRoles().then(
-			function(roles) {
-				ctrl.clientRoles = roles;
-				log.debug('roleController.js - objeto clientRoles: \n' + JSON.stringify(roles, null, '\t'));
-			}
-		);
-	};
-	ctrl.obtainClientRoles();
-
-	ctrl.obtainUserRoles = function() {
-		httpService.obtainUserRoles().then(
-			function(roles) {
-				ctrl.userRoles = roles;
-				log.debug('roleController.js - objeto userRoles: \n' + JSON.stringify(roles, null, '\t'));
-			}
-		);
-	};
-	ctrl.obtainUserRoles();
-
-	$scope.$on('carregou-dados-usuario', function(event, dados) {
-		log.debug('roleController.js - tá rodando o evento no controller roles');
-	});
-
-	ctrl.resetSelectedUser = function() {
-		selectedUserService.reset();
-	};
-
-
-}]);
+		ctrl.resetSelectedUser = function() {
+			selectedUserService.reset();
+		};
+	}
+]);

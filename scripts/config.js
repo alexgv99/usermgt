@@ -14,12 +14,31 @@ app.config(['$routeProvider', '$locationProvider', '$httpProvider', function ($r
 	.when('/user', {
 		controller: 'userController',
 		controllerAs: 'ctrl',
-		templateUrl: 'views/user.html'
+		templateUrl: 'views/user.html',
+		resolve: {
+			realmUsers: ['httpService', function(httpService) {
+				return httpService.obtainRealmUsers();
+			}]
+		}
 	})
-	.when('/roles', {
+	.when('/role/:id', {
 		controller: 'roleController',
 		controllerAs: 'ctrl',
-		templateUrl: 'views/roles.html'
+		templateUrl: 'views/role.html',
+		resolve: {
+			user: function(httpService, $route) {
+				var params = {
+					id: $route.current.params.id
+				};
+				return httpService.loadUser(params);
+			},
+			realmRoles: function(httpService) {
+				return httpService.obtainRealmRoles();
+			},
+			clientRoles: function(httpService) {
+				return httpService.obtainClientRoles();
+			}
+		}
 	})
 	.otherwise({
 		redirectTo: '/user'

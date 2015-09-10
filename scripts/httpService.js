@@ -26,17 +26,16 @@ app.factory('httpService', [
 			return $http.get(url).then(function(response) {
 				realmService.set(response.data);
 				httpService.realm = realmService.get();
-				return response.data;
+				return response;
 			});
 		};
 
 		httpService.obtainClient = function() {
-			///admin/realms/{realm}/clients/{id}
 			var url = urlBase + keycloakService.get().realm + '/clients/' + keycloakService.get().clientId;
 			return $http.get(url).then(function(response) {
 				clientService.set(response.data);
 				httpService.client = clientService.get();
-				return response.data;
+				return response;
 			});
 		};
 
@@ -46,7 +45,18 @@ app.factory('httpService', [
 			var json = { "search": parms.nome };
 			return $http.get(url , {params: json}).then(function(response) {
 				httpService.users = response.data;
-				return response.data;
+				return response;
+			});
+		};
+
+		httpService.loadUser = function(parms) {
+			var url = urlBase + keycloakService.get().realm + '/users/' + parms.id;
+			log.info('httpService.searchUser: ' + url + '?search=' + parms.id);
+			var json = { "search": parms.id };
+			return $http.get(url , {params: json}).then(function(response) {
+				httpService.user = response.data;
+				selectedUserService.set(httpService.user);
+				return response;
 			});
 		};
 
@@ -55,16 +65,16 @@ app.factory('httpService', [
 			log.info('httpService.obtainRealmRoles: ' + url);
 			return $http.get(url).then(function(response) {
 				httpService.realmRoles = response.data;
-				return response.data;
+				return response;
 			});
 		};
 
 		httpService.obtainClientRoles = function() {
 			var url = urlBase + keycloakService.get().realm + '/clients/' + httpService.client.clientId + '/roles';
-			log.info('httpService.obtainUserRoles: ' + url);
+			log.info('httpService.obtainClientRoles: ' + url);
 			return $http.get(url).then(function(response) {
 				httpService.clientRoles = response.data;
-				return response.data;
+				return response;
 			});
 		};
 
@@ -73,7 +83,7 @@ app.factory('httpService', [
 			log.info('httpService.obtainRealmUsers: ' + url);
 			return $http.get(url).then(function(response) {
 				httpService.realmUsers = response.data;
-				return response.data;
+				return response;
 			});
 		};
 
@@ -84,13 +94,8 @@ app.factory('httpService', [
 			log.info('httpService.obtainUserRoles: ' + url);
 			return $http.get(url).then(function(response) {
 					httpService.userRoles = response.data;
-				return response.data;
+				return response;
 			});
-		};
-
-		httpService.selectUser = function(user) {
-			httpService.user = user;
-			selectedUserService.set(user);
 		};
 
 		return httpService;
