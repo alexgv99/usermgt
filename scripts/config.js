@@ -8,8 +8,35 @@ var logout = function(){
 	window.location = auth.logoutUrl;
 };
 
+app.config(['$routeProvider', '$locationProvider', '$httpProvider', function ($routeProvider, $locationProvider, $httpProvider) {
+
+	$routeProvider
+	.when('/user', {
+		controller: 'userController',
+		controllerAs: 'ctrl',
+		templateUrl: 'views/user.html'
+	})
+	.when('/roles', {
+		controller: 'roleController',
+		controllerAs: 'ctrl',
+		templateUrl: 'views/roles.html'
+	})
+	.otherwise({
+		redirectTo: '/user'
+	});
+
+	$locationProvider.html5Mode({
+		enabled : false,
+		requireBase : false,
+		rewriteLinks : true
+	});
+
+	$httpProvider.interceptors.push('errorInterceptor');
+	$httpProvider.interceptors.push('authInterceptor');
+}]);
+
 app.run(['$rootScope', 'logService', 'keycloakService', function ($rootScope, log, keycloakService) {
-	log.debug('config.js: Inicializando a página');
+	log.debug('config.js: Inicializando a •••••••••••••••••••••página');
 	var keycloakAuth = new Keycloak('keycloak.json');
 	auth.loggedIn = false;
 	keycloakAuth.init({ onLoad: 'login-required' }).success(function () {
@@ -26,33 +53,6 @@ app.run(['$rootScope', 'logService', 'keycloakService', function ($rootScope, lo
 			alert("failed to login");
 	});
 
-}]);
-
-app.config(['$routeProvider', '$locationProvider', '$httpProvider', function ($routeProvider, $locationProvider, $httpProvider) {
-
-	$routeProvider
-	.when('/user', {
-		controller: 'userController',
-		controllerAs: 'ctrl',
-		templateUrl: 'views/user.html'
-	})
-	.when('/roles', {
-		controller: 'rolesController',
-		controllerAs: 'ctrl',
-		templateUrl: 'views/roles.html'
-	})
-	.otherwise({
-		redirectTo: '/user'
-	});
-
-	$locationProvider.html5Mode({
-		enabled : false,
-		requireBase : false,
-		rewriteLinks : true
-	});
-
-	$httpProvider.interceptors.push('errorInterceptor');
-	$httpProvider.interceptors.push('authInterceptor');
 }]);
 
 app.factory('authInterceptor', ['$q', 'logService', function($q, log) {
@@ -96,5 +96,68 @@ app.factory('errorInterceptor', ['$q', 'logService', function($q, log) {
 			}
 			return $q.reject(response);
 		});
+	};
+}]);
+
+app.service('keycloakService', ['$localStorage', function($localStorage) {
+	this.set = function(keycloakObject) {
+		$localStorage.keycloakObject = keycloakObject;
+	};
+	this.get = function() {
+		return $localStorage.keycloakObject;
+	};
+	this.reset = function() {
+		delete $localStorage.keycloakObject;
+	};
+}]);
+
+app.service('selectedUserService', ['$localStorage', function($localStorage) {
+	this.set = function(selectedUser) {
+		$localStorage.selectedUser = selectedUser;
+	};
+	this.get = function() {
+		return $localStorage.selectedUser;
+	};
+	this.reset = function() {
+		delete $localStorage.selectedUser;
+	};
+}]);
+
+app.service('realmService', ['$localStorage', function($localStorage) {
+	this.set = function(realm) {
+		$localStorage.realm = realm;
+	};
+	this.get = function() {
+		return $localStorage.realm;
+	};
+	this.reset = function() {
+		delete $localStorage.realm;
+	};
+}]);
+
+app.service('clientService', ['$localStorage', function($localStorage) {
+	this.set = function(client) {
+		$localStorage.client = client;
+	};
+	this.get = function() {
+		return $localStorage.client;
+	};
+	this.reset = function() {
+		delete $localStorage.client;
+	};
+}]);
+
+app.service('logService', ['$log', function($log) {
+	this.debug = function(msg) {
+//		$log.debug(msg);
+	};
+	this.info = function(msg) {
+		$log.info(msg);
+	};
+	this.error = function(msg) {
+		$log.error(msg);
+	};
+	this.warn = function(msg) {
+		$log.warn(msg);
 	};
 }]);
