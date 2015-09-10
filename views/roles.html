@@ -9,3 +9,16 @@
 <ul ng-repeat="role in ctrl.clientRoles">
 	<li><input type="checkbox"> {{role.name}} {{role.composite ? ' (composta)' : ''}}</li>
 </ul>
+
+<h2>Realm Users</h2>
+<ul ng-repeat="user in ctrl.realmUsers">
+	<li><input type="checkbox"> {{user.username}} ({{user.email}})</li>
+</ul>
+
+<h2>User Roles</h2>
+<ul ng-repeat="role in ctrl.userRoles.realmMappings">
+	<li><input type="checkbox"> {{role.name}} {{role.composite ? ' (composta)' : ''}}</li>
+</ul>
+
+
+<a href="#/" ng-click="ctrl.resetSelectedUser()">Voltar</a>
