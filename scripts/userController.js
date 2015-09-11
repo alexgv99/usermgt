@@ -1,41 +1,25 @@
-app.controller('userController', ['$scope', 'logService', 'httpService', function($scope, log, httpService) {
-	'use strict';
+app.controller('userController', [
+	'logService',
+	'httpService',
+	'realmUsers',
+	function(log, httpService, realmUsers) {
+		'use strict';
 
-	var ctrl = this;
+		var ctrl = this;
+		ctrl.users = [];
+		ctrl.realmUsers = realmUsers.data;
+		ctrl.pesquisa = {
+			nome : ''
+		};
 
-	ctrl.pesquisa = {
-		nome : ''
-	};
+		ctrl.searchUser = function() {
+			httpService.searchUser(ctrl.pesquisa).then(
+				function(users) {
+					ctrl.users = users.data;
+					log.debug('userController.js - objeto users obtido na pesquisa pelo nome "' + ctrl.pesquisa.nome + '": \n' + JSON.stringify(ctrl.users, null, '\t'));
+				}
+			);
+		};
 
-	ctrl.users = [];
-
-	ctrl.selectUser = function(user) {
-		httpService.selectUser(angular.copy(user));
-	};
-
-	ctrl.searchUser = function() {
-		httpService.searchUser(ctrl.pesquisa).then(
-			function(users) {
-				ctrl.users = users;
-				log.debug('userController.js - objeto users obtido na pesquisa pelo nome "' + ctrl.pesquisa.nome + '": \n' + JSON.stringify(users, null, '\t'));
-			}
-		);
-	};
-
-	ctrl.obtainRealmUsers = function() {
-		httpService.obtainRealmUsers().then(
-			function(users) {
-				ctrl.realmUsers = users;
-				log.debug('userController.js - objeto realmUsers: \n' + JSON.stringify(users, null, '\t'));
-			}
-		);
-	};
-	ctrl.obtainRealmUsers();
-
-	$scope.$on('carregou-dados-usuario', function(event, dados) {
-		log.debug("userController.js - tá rodando o evento no controller users");
-	});
-
-
-
-}]);
+	}
+]);
