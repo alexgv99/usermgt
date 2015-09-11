@@ -55,7 +55,7 @@ app.config(['$routeProvider', '$locationProvider', '$httpProvider', function ($r
 }]);
 
 app.run(['$rootScope', 'logService', 'keycloakService', function ($rootScope, log, keycloakService) {
-	log.debug('config.js: Inicializando a •••••••••••••••••••••página');
+	log.debug('config.js: Inicializando a página');
 	var keycloakAuth = new Keycloak('keycloak.json');
 	auth.loggedIn = false;
 	keycloakAuth.init({ onLoad: 'login-required' }).success(function () {
@@ -83,7 +83,6 @@ app.factory('authInterceptor', ['$q', 'logService', function($q, log) {
 				auth.authz.updateToken(5).success(function() {
 					config.headers = config.headers || {};
 					config.headers.Authorization = 'Bearer ' + auth.authz.token;
-
 					deferred.resolve(config);
 				}).error(function() {
 						deferred.reject('Failed to refresh token');
