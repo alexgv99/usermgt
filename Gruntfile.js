@@ -1,4 +1,4 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
 		jshint: {
@@ -8,9 +8,9 @@ module.exports = function(grunt) {
 			unit: {
 				configFile: 'karma.conf.js'
 			}
-		}  		
+		}
 	});
 	grunt.loadNpmTasks('grunt-contrib-jshint');
-	grunt.loadNpmTasks('grunt-karma');	
-	grunt.registerTask('default', ['jshint', 'karma']);
+	grunt.loadNpmTasks('grunt-karma');
+	grunt.registerTask('default', ['jshint']); //, 'karma'
 };

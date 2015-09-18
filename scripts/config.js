@@ -1,64 +1,81 @@
 /* globals angular, Keycloak, keycloak, location, alert, window, document */
-var app = angular.module('usermgt-app', ['ui.bootstrap', 'ngRoute', 'ngStorage']);
-
 var auth = {};
-var logout = function(){
+var logout = function () {
 	auth.loggedIn = false;
 	auth.authz = null;
 	window.location = auth.logoutUrl;
 };
 
-app.config(['$routeProvider', '$locationProvider', '$httpProvider', function ($routeProvider, $locationProvider, $httpProvider) {
+angular
+	.module('usermgt-app', ['ui.bootstrap', 'ngRoute', 'ngStorage'])
+	.config(configuration)
+	.run(initialization)
+	.factory('authInterceptor', authInterceptor)
+	.factory('errorInterceptor', errorInterceptor)
+	.service('keycloakService', keycloakService)
+	.service('selectedUserService', selectedUserService)
+	.service('realmService', realmService)
+	.service('clientService', clientService)
+	.service('logService', logService);
 
+configuration.$inject = ['$routeProvider', '$locationProvider', '$httpProvider'];
+
+function configuration($routeProvider, $locationProvider, $httpProvider) {
 	$routeProvider
-	.when('/user', {
-		controller: 'userController',
-		controllerAs: 'ctrl',
-		templateUrl: 'views/user.html',
-		resolve: {
-			realmUsers: ['httpService', function(httpService) {
-				return httpService.obtainRealmUsers();
-			}]
-		}
-	})
-	.when('/role/:id', {
-		controller: 'roleController',
-		controllerAs: 'ctrl',
-		templateUrl: 'views/role.html',
-		resolve: {
-			user: function(httpService, $route) {
-				var params = {
-					id: $route.current.params.id
-				};
-				return httpService.loadUser(params);
-			},
-			realmRoles: function(httpService) {
-				return httpService.obtainRealmRoles();
-			},
-			clientRoles: function(httpService) {
-				return httpService.obtainClientRoles();
+		.when('/user', {
+			controller: 'Users',
+			controllerAs: 'users',
+			templateUrl: 'views/user.html'
+		})
+		.when('/role/:id', {
+			controller: 'Roles',
+			controllerAs: 'ctrl',
+			templateUrl: 'views/role.html',
+			resolve: {
+				user: function (httpService, $route) {
+					var params = {
+						id: $route.current.params.id
+					};
+					return httpService.loadUser(params);
+				},
+				realmRoles: function (httpService) {
+					return httpService.obtainRealmRoles();
+				},
+				clientRoles: function (httpService) {
+					return httpService.obtainClientRoles();
+				}
 			}
-		}
-	})
-	.otherwise({
-		redirectTo: '/user'
-	});
-
+		})
+		.otherwise({
+			redirectTo: '/user'
+		});
 	$locationProvider.html5Mode({
-		enabled : false,
-		requireBase : false,
-		rewriteLinks : true
+		enabled: false,
+		requireBase: false,
+		rewriteLinks: true
 	});
-
 	$httpProvider.interceptors.push('errorInterceptor');
 	$httpProvider.interceptors.push('authInterceptor');
-}]);
+}
 
-app.run(['$rootScope', 'logService', 'keycloakService', function ($rootScope, log, keycloakService) {
+initialization.$inject = ['$rootScope', '$route', '$location', 'logService', 'keycloakService'];
+
+function initialization($rootScope, $route, $location, log, keycloakService) {
+	$rootScope.$on("$routeChangeStart", function (event, next, current) {
+		if (!next.templateUrl) {
+			$location.path("/user");
+			$rootScope.$broadcast('reload-route');
+		}
+	});
+	$rootScope.$on("reload-route", function (event, next, current) {
+		$route.reload();
+	});
 	log.debug('config.js: Inicializando a página');
 	var keycloakAuth = new Keycloak('keycloak.json');
 	auth.loggedIn = false;
-	keycloakAuth.init({ onLoad: 'login-required' }).success(function () {
+	keycloakAuth.init({
+		onLoad: 'login-required'
+	}).success(function () {
 		auth.loggedIn = true;
 		auth.authz = keycloakAuth;
 		keycloakService.set(keycloakAuth);
@@ -69,37 +86,40 @@ app.run(['$rootScope', 'logService', 'keycloakService', function ($rootScope, lo
 		$rootScope.$broadcast('carregou-dados-usuario', $rootScope.usuario);
 		log.debug('config.js: Usuário logado: ' + $rootScope.usuario.nome);
 	}).error(function () {
-			alert("failed to login");
+		alert("failed to login");
 	});
+}
 
-}]);
+authInterceptor.$inject = ['$q', 'logService'];
 
-app.factory('authInterceptor', ['$q', 'logService', function($q, log) {
+function authInterceptor($q, log) {
 	return {
 		request: function (config) {
 			log.debug('config.js: objeto de configuração de request: \n' + JSON.stringify(config, null, "\t"));
 			var deferred = $q.defer();
 			if (auth && auth.authz && auth.authz.token) {
-				auth.authz.updateToken(5).success(function() {
+				auth.authz.updateToken(5).success(function () {
 					config.headers = config.headers || {};
 					config.headers.Authorization = 'Bearer ' + auth.authz.token;
 					deferred.resolve(config);
-				}).error(function() {
-						deferred.reject('Failed to refresh token');
-					});
+				}).error(function () {
+					deferred.reject('Failed to refresh token');
+				});
 			}
 			return deferred.promise;
 		}
 	};
-}]);
+}
 
-app.factory('errorInterceptor', ['$q', 'logService', function($q, log) {
-	return function(promise) {
-		return promise.then(function(response) {
+errorInterceptor.$inject = ['$q', 'logService'];
+
+function errorInterceptor($q, logService) {
+	return function (promise) {
+		return promise.then(function (response) {
 			return response;
-		}, function(response) {
+		}, function (response) {
 			if (response.status == 401) {
-				log.debug('config.js: erro 401 - session timeout?');
+				logService.debug('config.js: erro 401 - session timeout?');
 				logout();
 			} else if (response.status == 403) {
 				alert("config.js: erro 403 - Forbidden");
@@ -115,67 +135,77 @@ app.factory('errorInterceptor', ['$q', 'logService', function($q, log) {
 			return $q.reject(response);
 		});
 	};
-}]);
+}
 
-app.service('keycloakService', ['$localStorage', function($localStorage) {
-	this.set = function(keycloakObject) {
+keycloakService.$inject = ['$localStorage'];
+
+function keycloakService($localStorage) {
+	this.set = function (keycloakObject) {
 		$localStorage.keycloakObject = keycloakObject;
 	};
-	this.get = function() {
+	this.get = function () {
 		return $localStorage.keycloakObject;
 	};
-	this.reset = function() {
+	this.reset = function () {
 		delete $localStorage.keycloakObject;
 	};
-}]);
+}
 
-app.service('selectedUserService', ['$localStorage', function($localStorage) {
-	this.set = function(selectedUser) {
+selectedUserService.$inject = ['$localStorage'];
+
+function selectedUserService($localStorage) {
+	this.set = function (selectedUser) {
 		$localStorage.selectedUser = selectedUser;
 	};
-	this.get = function() {
+	this.get = function () {
 		return $localStorage.selectedUser;
 	};
-	this.reset = function() {
+	this.reset = function () {
 		delete $localStorage.selectedUser;
 	};
-}]);
+}
 
-app.service('realmService', ['$localStorage', function($localStorage) {
-	this.set = function(realm) {
+realmService.$inject = ['$localStorage'];
+
+function realmService($localStorage) {
+	this.set = function (realm) {
 		$localStorage.realm = realm;
 	};
-	this.get = function() {
+	this.get = function () {
 		return $localStorage.realm;
 	};
-	this.reset = function() {
+	this.reset = function () {
 		delete $localStorage.realm;
 	};
-}]);
+}
 
-app.service('clientService', ['$localStorage', function($localStorage) {
-	this.set = function(client) {
+clientService.$inject = ['$localStorage'];
+
+function clientService($localStorage) {
+	this.set = function (client) {
 		$localStorage.client = client;
 	};
-	this.get = function() {
+	this.get = function () {
 		return $localStorage.client;
 	};
-	this.reset = function() {
+	this.reset = function () {
 		delete $localStorage.client;
 	};
-}]);
+}
 
-app.service('logService', ['$log', function($log) {
-	this.debug = function(msg) {
-//		$log.debug(msg);
+logService.$inject = ['$log'];
+
+function logService($log) {
+	this.debug = function (msg) {
+		$log.debug(msg);
 	};
-	this.info = function(msg) {
+	this.info = function (msg) {
 		$log.info(msg);
 	};
-	this.error = function(msg) {
+	this.error = function (msg) {
 		$log.error(msg);
 	};
-	this.warn = function(msg) {
+	this.warn = function (msg) {
 		$log.warn(msg);
 	};
-}]);
+}
