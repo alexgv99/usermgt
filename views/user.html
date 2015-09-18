@@ -1,13 +1,17 @@
-Pesquisa: <input ng-model="ctrl.pesquisa.nome">
-<input type="submit" ng-click="ctrl.searchUser()">
+<form>
+	Pesquisa:
+	<input type="text" ng-model="users.pesquisa.nome">
+	<input type="submit" value="Pesquisar" ng-click="users.searchUsers()">
+	<input type="button" value="Mostrar todos os usuários" ng-click="users.obtainRealmUsers()">
+</form>
 
-<ul ng-repeat="user in ctrl.users">
+<ul ng-repeat="user in users.users">
 	<li><a ng-href="#/role/{{user.username}}">{{user.username}} ({{user.email}})</a></li>
 </ul>
 
-<h2>Realm Users</h2>
-<ul ng-repeat="user in ctrl.realmUsers">
-	<li><a ng-href="#/role/{{user.username}}">{{user.username}} ({{user.email}})</a></li>
-</ul>
-
-
+<span ng-show="users.realmUsers.length">
+	<h3>Realm Users</h3>
+	<ul ng-repeat="user in users.realmUsers">
+		<li><a ng-href="#/role/{{user.username}}">{{user.username}} ({{user.email}})</a></li>
+	</ul>
+</span>
