@@ -1,8 +1,5 @@
-app.controller('userController', [
-	'logService',
-	'httpService',
-	'realmUsers',
-	function(log, httpService, realmUsers) {
+app.controller('userController', ['logService', 'httpService', 'realmUsers',
+	function(logService, httpService, realmUsers) {
 		'use strict';
 
 		var ctrl = this;
@@ -16,7 +13,7 @@ app.controller('userController', [
 			httpService.searchUser(ctrl.pesquisa).then(
 				function(users) {
 					ctrl.users = users.data;
-					log.debug('userController.js - objeto users obtido na pesquisa pelo nome "' + ctrl.pesquisa.nome + '": \n' + JSON.stringify(ctrl.users, null, '\t'));
+					logService.debug('userController.js - objeto users obtido na pesquisa pelo nome "' + ctrl.pesquisa.nome + '": \n' + JSON.stringify(ctrl.users, null, '\t'));
 				}
 			);
 		};
