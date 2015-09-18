@@ -1,6 +1,5 @@
 angular.module('mocksParaInicializacao', [])
-.value('keycloakService', {get: function(){ return {authServerUrl: "qualquerCoisa"}}} )
-.value('realmUsers', {data: 'qualquerCoisa'})
+.value('keycloakService', {get: function(){ return {authServerUrl: "qualquerCoisa"};}} )
 .value('authInterceptor', {})
 .value('errorInterceptor', {});
 

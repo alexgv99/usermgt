@@ -8,17 +8,17 @@ function Users(logService, httpService) {
 	'use strict';
 
 	var ctrl = this;
-	ctrl.users = [];
-	ctrl.realmUsers = [];
-	ctrl.pesquisa = {
-		nome: ''
-	};
-	ctrl.obtainRealmUsers = obtainRealmUsers;
-	ctrl.searchUsers = searchUsers;
 
 	activate();
 
 	function activate() {
+		ctrl.users = [];
+		ctrl.realmUsers = [];
+		ctrl.pesquisa = {
+			nome: ''
+		};
+		ctrl.obtainRealmUsers = obtainRealmUsers;
+		ctrl.searchUsers = searchUsers;		
 		logService.debug('Users view ativada');
 	}
 
