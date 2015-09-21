@@ -2,8 +2,9 @@
 var auth = {};
 var logout = function () {
 	auth.loggedIn = false;
+	auth.authz.logout();
 	auth.authz = null;
-	window.location = auth.logoutUrl;
+	//	window.location = auth.logoutUrl;
 };
 
 angular
@@ -79,7 +80,8 @@ function initialization($rootScope, $route, $location, log, keycloakService) {
 		auth.loggedIn = true;
 		auth.authz = keycloakAuth;
 		keycloakService.set(keycloakAuth);
-		auth.logoutUrl = keycloakAuth.authServerUrl + "/realms/" + keycloakAuth.realm + "/tokens/logout?redirect_uri=http://localhost:8080";
+		var redirectPath = $location.protocol() + ":" + $location.host() + ":" + $location.port() + "/index.html";
+		auth.logoutUrl = keycloakAuth.authServerUrl + "/realms/" + keycloakAuth.realm + "/tokens/logout?redirect_uri=" + redirectPath;
 		$rootScope.usuario = {};
 		$rootScope.usuario.login = auth.authz.idTokenParsed.preferred_username;
 		$rootScope.usuario.nome = auth.authz.idTokenParsed.name.trim() || auth.authz.idTokenParsed.preferred_username;
