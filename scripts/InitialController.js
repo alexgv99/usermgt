@@ -2,9 +2,9 @@ angular
 	.module('usermgt-app')
 	.controller('Initial', Initial);
 
-Initial.$inject = ['$scope', 'httpService', 'logService'];
+Initial.$inject = ['$scope', '$location', 'httpService', 'logService'];
 
-function Initial($scope, httpService, log) {
+function Initial($scope, $location, httpService, logService) {
 	var ctrl = this;
 
 	$scope.usuario = {
@@ -12,10 +12,11 @@ function Initial($scope, httpService, log) {
 	};
 
 	$scope.$on('carregou-dados-usuario', function (event, dados) {
-		log.debug("initialController.js - tá rodando o evento no controller do login");
+		logService.debug("initialController.js - tá rodando o evento no controller do login");
 		httpService.loadRealm();
 		httpService.loadClient();
 		$scope.usuario = dados;
-		$scope.$apply();
+		$location.path('/');
+		//		$scope.$apply();
 	});
 }
