@@ -16,7 +16,6 @@ function Initial($scope, $location, httpService, logService, debugControllers) {
 		httpService.loadRealm();
 		httpService.loadClient();
 		$scope.usuario = dados;
-		$location.path('/');
 		$scope.$apply();
 	});
 }

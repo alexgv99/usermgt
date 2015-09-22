@@ -21,37 +21,9 @@ angular
 	.value('debugServices', false)
 	.value('debugControllers', false);
 
-configuration.$inject = ['$routeProvider', '$locationProvider', '$httpProvider'];
+configuration.$inject = ['$locationProvider', '$httpProvider'];
 
-function configuration($routeProvider, $locationProvider, $httpProvider) {
-	$routeProvider
-		.when('/user', {
-			controller: 'Users',
-			controllerAs: 'users',
-			templateUrl: 'views/user.html'
-		})
-		.when('/role/:id', {
-			controller: 'Roles',
-			controllerAs: 'ctrl',
-			templateUrl: 'views/role.html',
-			resolve: {
-				user: function (httpService, $route) {
-					var params = {
-						id: $route.current.params.id
-					};
-					return httpService.loadUser(params);
-				},
-				realmRoles: function (httpService) {
-					return httpService.obtainRealmRoles();
-				},
-				clientRoles: function (httpService) {
-					return httpService.obtainClientRoles();
-				}
-			}
-		})
-		.otherwise({
-			redirectTo: '/user'
-		});
+function configuration($locationProvider, $httpProvider) {
 	$locationProvider.html5Mode({
 		enabled: false,
 		requireBase: false,

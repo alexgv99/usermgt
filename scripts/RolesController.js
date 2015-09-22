@@ -20,18 +20,27 @@ function Roles($q, $routeParams, logService, selectedUserService, httpService, u
 
 	function activate() {
 		$q.all([
-			obtainUserRolesRealm().then(function (response) {
-				if (debugControllers) logService.debug("Roles do usuário no Realm: " + JSON.stringify(response.data, null, '\t'));
-				carregaRoles(response.data, 'realm');
+			httpService.obtainRealmRoles().then(function(response) {
+				ctrl.realmRoles = response.data;
 			}),
-			obtainUserRolesClient().then(function (response) {
-				if (debugControllers) logService.debug("Roles do usuário no Client: " + JSON.stringify(response.data, null, '\t'));
-				carregaRoles(response.data, 'client');
+			httpService.obtainClientRoles().then(function(response) {
+				ctrl.clientRoles = response.data;
 			})
-		]).then(function(values) {
-			var unido = lodash.union(ctrl.roles, ctrl.realmRoles, ctrl.clientRoles);
-			ctrl.roles = lodash.uniq(unido, function(item) {
-				return item.id;
+		]).then(function() {
+			$q.all([
+				obtainUserRolesRealm().then(function (response) {
+					if (debugControllers) logService.debug("Roles do usuário no Realm: " + JSON.stringify(response.data, null, '\t'));
+					carregaRoles(response.data, 'realm');
+				}),
+				obtainUserRolesClient().then(function (response) {
+					if (debugControllers) logService.debug("Roles do usuário no Client: " + JSON.stringify(response.data, null, '\t'));
+					carregaRoles(response.data, 'client');
+				})
+			]).then(function(values) {
+				var unido = lodash.union(ctrl.roles, ctrl.realmRoles, ctrl.clientRoles);
+				ctrl.roles = lodash.uniq(unido, function(item) {
+					return item.id;
+				});
 			});
 		});
 	}
