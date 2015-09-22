@@ -1,70 +1,11 @@
 <h1>Edição de papéis para {{ctrl.user.email}}</h1>
 
-<div class="row">
-    <div class="col-md-4">
-        <h2>Realm Roles</h2>
-        <ul ng-repeat="role in ctrl.realmRoles">
-            <li><input type="checkbox" id="realmRole-{{role.id}}"> <label for="realmRole-{{role.id}}">{{role.name}} {{role.composite ? ' (composta)' : ''}}</label></li>
-        </ul>
-    </div>
-    <div class="col-md-4">
-        <h2>Client Roles</h2>
-        <ul ng-repeat="role in ctrl.clientRoles">
-            <li><input type="checkbox" id="clientRole-{{role.id}}"> <label for="clientRole-{{role.id}}">{{role.name}} {{role.composite ? ' (composta)' : ''}}</label></li>
-        </ul>
-    </div>
-    <div class="col-md-4 ">
-        <h2>User Roles</h2>
-        <ul ng-repeat="role in ctrl.userRoles">
-            <li><input type="checkbox" id="realmMapping-{{role.id}}"> <label for="realmMapping-{{role.id}}">{{role.name}} {{role.composite ? ' (composta)' : ''}}</label></li>
-        </ul>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-12">
-        <div class="pull-right">
-            <a class="btn btn-default" href="#" role="button" href="#/" ng-click="ctrl.resetSelectedUser()">voltar</a>
-            <button class="btn btn-primary" type="submit">salvar</button>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-4">
-        <div class="painelKey panel panel-default">
-            <div class="panel-heading">Papéis do reino</div>
-            <div class="panel-body">
-                <ul ng-repeat="role in ctrl.realmRoles">
-                    <li><input type="checkbox" id="realmRole-{{role.id}}"> <label for="realmRole-{{role.id}}">{{role.name}} {{role.composite ? ' (composta)' : ''}}</label></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="painelKey panel panel-default">
-            <div class="panel-heading">Papéis do sistema</div>
-            <div class="panel-body">
-                <ul ng-repeat="role in ctrl.userRoles">
-                    <li><input type="checkbox" id="realmMapping-{{role.id}}"> <label for="realmMapping-{{role.id}}">{{role.name}} {{role.composite ? ' (composta)' : ''}}</label></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class=" painelKey panel panel-default">
-            <div class="panel-heading">Papéis do sistema</div>
-            <div class="panel-body">
-                <ul ng-repeat="role in ctrl.userRoles">
-                    <li><input type="checkbox" id="realmMapping-{{role.id}}"> <label for="realmMapping-{{role.id}}">{{role.name}} {{role.composite ? ' (composta)' : ''}}</label></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-12">
-        <div class="pull-right">
-            <a class="btn btn-default" href="#" role="button" href="#/" ng-click="ctrl.resetSelectedUser()">voltar</a>
-            <button class="btn btn-primary" type="submit">salvar</button>
-        </div>
-    </div>
-</div>
+<h2>User Roles</h2>
+<ul ng-repeat="role in ctrl.roles">
+	<li>
+		<input type="checkbox" id="realmMapping-{{role.id}}" ng-model="role.checked">
+		<label for="realmMapping-{{role.id}}">{{role.name}} [{{role.context}}] {{ctrl.showFilhas(role)}}</label>
+	</li>
+</ul>
+
+<a href="#/" ng-click="ctrl.resetSelectedUser()">Voltar</a>

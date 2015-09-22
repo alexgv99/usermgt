@@ -26,7 +26,6 @@ describe('Testes para o userController', function() {
 			var deferred = $q.defer();
 			deferred.resolve({data: 'listaDeUsuarios'});
 			spyOn(httpService, 'searchUser').and.returnValue(deferred.promise);
-			spyOn(logService, 'debug');
 			$httpBackend.whenGET("views/user.html").respond();
 
 			userController.searchUsers();
@@ -34,7 +33,6 @@ describe('Testes para o userController', function() {
 			$rootScope.$apply();
 			expect(userController.users).toBe('listaDeUsuarios');
 			expect(httpService.searchUser).toHaveBeenCalledWith(userController.pesquisa);
-			expect(logService.debug).toHaveBeenCalled();
 		});
 
 		it('nao deve alterar userController.users quando chamada a httpService.searchUser() falha', function() {
