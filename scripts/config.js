@@ -7,7 +7,7 @@ var logout = function () {
 };
 
 angular
-	.module('usermgt-app', ['ui.bootstrap', 'ngRoute', 'ngStorage'])
+	.module('usermgt-app', ['ui.bootstrap', 'ngRoute', 'ngStorage', 'ngLodash'])
 	.config(configuration)
 	.run(initialization)
 	.factory('authInterceptor', authInterceptor)
@@ -16,7 +16,10 @@ angular
 	.service('selectedUserService', selectedUserService)
 	.service('realmService', realmService)
 	.service('clientService', clientService)
-	.service('logService', logService);
+	.service('logService', logService)
+	.value('debugConfig', false)
+	.value('debugServices', false)
+	.value('debugControllers', false);
 
 configuration.$inject = ['$routeProvider', '$locationProvider', '$httpProvider'];
 
@@ -58,10 +61,10 @@ function configuration($routeProvider, $locationProvider, $httpProvider) {
 	$httpProvider.interceptors.push('authInterceptor');
 }
 
-initialization.$inject = ['$rootScope', '$location', 'logService', 'keycloakService'];
+initialization.$inject = ['$rootScope', '$location', 'logService', 'keycloakService', 'debugConfig'];
 
-function initialization($rootScope, $location, logService, keycloakService) {
-	logService.debug('config.js: Inicializando a página');
+function initialization($rootScope, $location, logService, keycloakService, debugConfig) {
+	debugConfig && logService.debug('config.js: Inicializando a página');
 	var keycloakAuth = new Keycloak('keycloak.json');
 	auth.loggedIn = false;
 	keycloakAuth.init({
@@ -76,18 +79,18 @@ function initialization($rootScope, $location, logService, keycloakService) {
 		$rootScope.usuario.login = auth.authz.idTokenParsed.preferred_username;
 		$rootScope.usuario.nome = auth.authz.idTokenParsed.name.trim() || auth.authz.idTokenParsed.preferred_username;
 		$rootScope.$broadcast('carregou-dados-usuario', $rootScope.usuario);
-		logService.debug('config.js: Usuário logado: ' + $rootScope.usuario.nome);
+		debugConfig && logService.debug('config.js: Usuário logado: ' + $rootScope.usuario.nome);
 	}).error(function () {
 		alert("failed to login");
 	});
 }
 
-authInterceptor.$inject = ['$q', 'logService'];
+authInterceptor.$inject = ['$q', 'logService', 'debugConfig'];
 
-function authInterceptor($q, log) {
+function authInterceptor($q, log, debugConfig) {
 	return {
 		request: function (config) {
-			//log.debug('config.js: objeto de configuração de request: \n' + JSON.stringify(config, null, "\t"));
+			debugConfig && log.debug('config.js: objeto de configuração de request: \n' + JSON.stringify(config, null, "\t"));
 			var deferred = $q.defer();
 			if (auth && auth.authz && auth.authz.token) {
 				auth.authz.updateToken(5).success(function () {
@@ -103,15 +106,15 @@ function authInterceptor($q, log) {
 	};
 }
 
-errorInterceptor.$inject = ['$q', 'logService'];
+errorInterceptor.$inject = ['$q', 'logService', 'debugConfig'];
 
-function errorInterceptor($q, logService) {
+function errorInterceptor($q, logService, debugConfig) {
 	return function (promise) {
 		return promise.then(function (response) {
 			return response;
 		}, function (response) {
 			if (response.status == 401) {
-				logService.debug('config.js: erro 401 - session timeout?');
+				debugConfig && logService.debug('config.js: erro 401 - session timeout?');
 				logout();
 			} else if (response.status == 403) {
 				alert("config.js: erro 403 - Forbidden");
