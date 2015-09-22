@@ -10,8 +10,12 @@
 	<li><input type="checkbox" id="clientRole-{{role.id}}"> <label for="clientRole-{{role.id}}">{{role.name}} {{role.composite ? ' (composta)' : ''}}</label></li>
 </ul>
 
-<h2>User Roles</h2>
-<ul ng-repeat="role in ctrl.userRoles">
+<h2>User Roles no Realm</h2>
+<ul ng-repeat="role in ctrl.userRolesRealm">
+	<li><input type="checkbox" id="realmMapping-{{role.id}}"> <label for="realmMapping-{{role.id}}">{{role.name}} {{role.composite ? ' (composta)' : ''}}</label></li>
+</ul>
+<h2>User Roles no Client</h2>
+<ul ng-repeat="role in ctrl.userRolesClient">
 	<li><input type="checkbox" id="realmMapping-{{role.id}}"> <label for="realmMapping-{{role.id}}">{{role.name}} {{role.composite ? ' (composta)' : ''}}</label></li>
 </ul>
 

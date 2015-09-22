@@ -87,7 +87,7 @@ authInterceptor.$inject = ['$q', 'logService'];
 function authInterceptor($q, log) {
 	return {
 		request: function (config) {
-			log.debug('config.js: objeto de configuração de request: \n' + JSON.stringify(config, null, "\t"));
+			//log.debug('config.js: objeto de configuração de request: \n' + JSON.stringify(config, null, "\t"));
 			var deferred = $q.defer();
 			if (auth && auth.authz && auth.authz.token) {
 				auth.authz.updateToken(5).success(function () {

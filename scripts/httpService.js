@@ -75,7 +75,15 @@ function service($http, logService, realmService, clientService, selectedUserSer
 		return $http.get(url);
 	};
 
-	httpService.obtainUserRoles = function () {
+	httpService.obtainUserRolesRealm = function () {
+		var url = urlBase() + keycloakService.get().realm +
+			'/users/' + selectedUserService.get().username +
+			'/role-mappings/realm';
+		logService.info('httpService.obtainUserRoles: ' + url);
+		return $http.get(url);
+	};
+
+	httpService.obtainUserRolesClient = function () {
 		var url = urlBase() + keycloakService.get().realm +
 			'/users/' + selectedUserService.get().username +
 			'/role-mappings/clients-by-id/' + clientService.get().id;

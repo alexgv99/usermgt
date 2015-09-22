@@ -13,28 +13,34 @@ function Roles($routeParams, logService, selectedUserService, httpService, user,
 	ctrl.user = user.data;
 	ctrl.realmRoles = realmRoles.data;
 	ctrl.clientRoles = clientRoles.data;
-	ctrl.userRoles = [];
+	ctrl.userRolesRealm = [];
+	ctrl.userRolesClient = [];
 	ctrl.resetSelectedUser = resetSelectedUser;
 
 	activate();
 
 	function activate() {
-		obtainUserRoles().then(function (data) {
-			logService.debug("Roles view ativada 1: " + JSON.stringify(data, null, '\t'));
+		obtainUserRolesRealm().then(function (data) {
+			logService.debug("Roles do usuário no Realm: " + JSON.stringify(data, null, '\t'));
 		});
-		logService.debug("Roles view ativada 2");
+		obtainUserRolesClient().then(function (data) {
+			logService.debug("Roles do usuário no Client: " + JSON.stringify(data, null, '\t'));
+		});
 	}
 
 	//a carga desta roles precisou ficar dentro do controller porque
 	//para carregá-las o usuário selecionado já precisa ter sido carregado,
 	//o que ocorre no "resolve" do $routeProvider
-	function obtainUserRoles() {
-		return httpService.obtainUserRoles().then(function (roles) {
-			ctrl.userRoles = roles.data;
-			return ctrl.userRoles;
-		}).then(function (data) {
-			logService.debug('Outra promise: ' + JSON.stringify(data, null, '\t'));
-			return data;
+	function obtainUserRolesRealm() {
+		return httpService.obtainUserRolesRealm().then(function (roles) {
+			ctrl.userRolesRealm = roles.data;
+			return ctrl.userRolesRealm;
+		});
+	}
+	function obtainUserRolesClient() {
+		return httpService.obtainUserRolesClient().then(function (roles) {
+			ctrl.userRolesClient = roles.data;
+			return ctrl.userRolesClient;
 		});
 	}
 
