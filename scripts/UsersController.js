@@ -19,14 +19,14 @@ function Users(logService, httpService, debugControllers) {
 		};
 		ctrl.obtainRealmUsers = obtainRealmUsers;
 		ctrl.searchUsers = searchUsers;		
-		debugControllers && logService.debug('Users view ativada');
+		if (debugControllers) logService.debug('Users view ativada');
 	}
 
 	function searchUsers() {
 		return httpService.searchUser(ctrl.pesquisa).then(
 			function (users) {
 				ctrl.users = users.data;
-				debugControllers && logService.debug('UsersController.js - users obtido na pesquisa pelo nome "' + ctrl.pesquisa.nome + '": \n' + JSON.stringify(ctrl.users, null, '\t'));
+				if (debugControllers) logService.debug('UsersController.js - users obtido na pesquisa pelo nome "' + ctrl.pesquisa.nome + '": \n' + JSON.stringify(ctrl.users, null, '\t'));
 			}
 		);
 	}
@@ -35,7 +35,7 @@ function Users(logService, httpService, debugControllers) {
 		return httpService.obtainRealmUsers().then(
 			function (users) {
 				ctrl.realmUsers = users.data;
-				debugControllers && logService.debug('UsersController.js - users do realm: \n' + JSON.stringify(ctrl.realmUsers, null, '\t'));
+				if (debugControllers) logService.debug('UsersController.js - users do realm: \n' + JSON.stringify(ctrl.realmUsers, null, '\t'));
 			}
 		);
 	}

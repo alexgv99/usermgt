@@ -18,7 +18,7 @@ function service($http, logService, realmService, clientService, selectedUserSer
 		var url = urlBase() + keycloakService.get().realm;
 		return $http.get(url).then(function (response) {
 			realmService.set(response.data);
-			debugServices && logService.debug('httpService.loadRealm("' + keycloakService.get().realm + '"):\n'+ JSON.stringify(response.data, null, '\t'));
+			if (debugServices) logService.debug('httpService.loadRealm("' + keycloakService.get().realm + '"):\n'+ JSON.stringify(response.data, null, '\t'));
 			return response;
 		});
 	};
@@ -27,7 +27,7 @@ function service($http, logService, realmService, clientService, selectedUserSer
 		var url = urlBase() + keycloakService.get().realm + '/clients/' + keycloakService.get().clientId;
 		return $http.get(url).then(function (response) {
 			clientService.set(response.data);
-			debugServices && logService.debug('httpService.loadClient("' + keycloakService.get().clientId + '"):\n'+ JSON.stringify(response.data, null, '\t'));
+			if (debugServices) logService.debug('httpService.loadClient("' + keycloakService.get().clientId + '"):\n'+ JSON.stringify(response.data, null, '\t'));
 			return response;
 		});
 	};
@@ -42,7 +42,7 @@ function service($http, logService, realmService, clientService, selectedUserSer
 			params: json
 		}).then(function (response) {
 			selectedUserService.set(response.data);
-			debugServices && logService.debug('httpService.searchUser("' + parms.id + '"):\n'+ JSON.stringify(response.data, null, '\t'));
+			if (debugServices) logService.debug('httpService.searchUser("' + parms.id + '"):\n'+ JSON.stringify(response.data, null, '\t'));
 			return response;
 		});
 	};
@@ -54,7 +54,7 @@ function service($http, logService, realmService, clientService, selectedUserSer
 			"search": parms.nome
 		};
 		return $http.get(url, { params: json }).then(function(response) {
-			debugServices && logService.debug('httpService.searchUser("' + parms.nome + '"):\n'+ JSON.stringify(response.data, null, '\t'));
+			if (debugServices) logService.debug('httpService.searchUser("' + parms.nome + '"):\n'+ JSON.stringify(response.data, null, '\t'));
 			return response;
 		});
 	};
@@ -64,7 +64,7 @@ function service($http, logService, realmService, clientService, selectedUserSer
 			var url = urlBase() + keycloakService.get().realm + '/users';
 			logService.info('httpService.obtainRealmUsers: ' + url);
 			return $http.get(url).then(function(response) {
-			debugServices && logService.debug('httpService.obtainRealmUsers:\n'+ JSON.stringify(response.data, null, '\t'));
+			if (debugServices) logService.debug('httpService.obtainRealmUsers:\n'+ JSON.stringify(response.data, null, '\t'));
 			return response;
 		});
 		}
@@ -74,7 +74,7 @@ function service($http, logService, realmService, clientService, selectedUserSer
 		var url = urlBase() + keycloakService.get().realm + '/roles';
 		logService.info('httpService.obtainRealmRoles: ' + url);
 		return $http.get(url).then(function(response) {
-			debugServices && logService.debug('httpService.obtainRealmRoles:\n'+ JSON.stringify(response.data, null, '\t'));
+			if (debugServices) logService.debug('httpService.obtainRealmRoles:\n'+ JSON.stringify(response.data, null, '\t'));
 			return response;
 		});
 	};
@@ -83,7 +83,7 @@ function service($http, logService, realmService, clientService, selectedUserSer
 		var url = urlBase() + keycloakService.get().realm + '/clients/' + clientService.get().clientId + '/roles';
 		logService.info('httpService.obtainClientRoles: ' + url);
 		return $http.get(url).then(function(response) {
-			debugServices && logService.debug('httpService.obtainClientRoles:\n'+ JSON.stringify(response.data, null, '\t'));
+			if (debugServices) logService.debug('httpService.obtainClientRoles:\n'+ JSON.stringify(response.data, null, '\t'));
 			return response;
 		});
 	};
@@ -94,7 +94,7 @@ function service($http, logService, realmService, clientService, selectedUserSer
 			'/role-mappings/realm';
 		logService.info('httpService.obtainUserRolesRealm: ' + url);
 		return $http.get(url).then(function(response) {
-			debugServices && logService.debug('httpService.obtainUserRolesRealm:\n'+ JSON.stringify(response.data, null, '\t'));
+			if (debugServices) logService.debug('httpService.obtainUserRolesRealm:\n'+ JSON.stringify(response.data, null, '\t'));
 			return response;
 		});
 	};
@@ -105,7 +105,7 @@ function service($http, logService, realmService, clientService, selectedUserSer
 			'/role-mappings/clients-by-id/' + clientService.get().id;
 		logService.info('httpService.obtainUserRolesClient: ' + url);
 		return $http.get(url).then(function(response) {
-			debugServices && logService.debug('httpService.obtainUserRolesClient:\n'+ JSON.stringify(response.data, null, '\t'));
+			if (debugServices) logService.debug('httpService.obtainUserRolesClient:\n'+ JSON.stringify(response.data, null, '\t'));
 			return response;
 		});
 	};
@@ -117,10 +117,10 @@ function service($http, logService, realmService, clientService, selectedUserSer
 			'/roles/' + roleName + '/composites';
 		logService.info('httpService.obtainCompositesFromRoleName("' + roleName + '"): ' + url);
 		return $http.get(url).then(function(response) {
-			debugServices && logService.debug('httpService.obtainCompositesFromRoleName("' + roleName + '"):\n'+ JSON.stringify(response.data, null, '\t'));
+			if (debugServices) logService.debug('httpService.obtainCompositesFromRoleName("' + roleName + '"):\n'+ JSON.stringify(response.data, null, '\t'));
 			return response;
 		});
-	}
+	};
 
 	return httpService;
 }

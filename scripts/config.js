@@ -64,7 +64,7 @@ function configuration($routeProvider, $locationProvider, $httpProvider) {
 initialization.$inject = ['$rootScope', '$location', 'logService', 'keycloakService', 'debugConfig'];
 
 function initialization($rootScope, $location, logService, keycloakService, debugConfig) {
-	debugConfig && logService.debug('config.js: Inicializando a página');
+	if (debugConfig) logService.debug('config.js: Inicializando a página');
 	var keycloakAuth = new Keycloak('keycloak.json');
 	auth.loggedIn = false;
 	keycloakAuth.init({
@@ -79,7 +79,7 @@ function initialization($rootScope, $location, logService, keycloakService, debu
 		$rootScope.usuario.login = auth.authz.idTokenParsed.preferred_username;
 		$rootScope.usuario.nome = auth.authz.idTokenParsed.name.trim() || auth.authz.idTokenParsed.preferred_username;
 		$rootScope.$broadcast('carregou-dados-usuario', $rootScope.usuario);
-		debugConfig && logService.debug('config.js: Usuário logado: ' + $rootScope.usuario.nome);
+		if (debugConfig) logService.debug('config.js: Usuário logado: ' + $rootScope.usuario.nome);
 	}).error(function () {
 		alert("failed to login");
 	});
@@ -90,7 +90,7 @@ authInterceptor.$inject = ['$q', 'logService', 'debugConfig'];
 function authInterceptor($q, log, debugConfig) {
 	return {
 		request: function (config) {
-			debugConfig && log.debug('config.js: objeto de configuração de request: \n' + JSON.stringify(config, null, "\t"));
+			if (debugConfig) log.debug('config.js: objeto de configuração de request: \n' + JSON.stringify(config, null, "\t"));
 			var deferred = $q.defer();
 			if (auth && auth.authz && auth.authz.token) {
 				auth.authz.updateToken(5).success(function () {
@@ -114,7 +114,7 @@ function errorInterceptor($q, logService, debugConfig) {
 			return response;
 		}, function (response) {
 			if (response.status == 401) {
-				debugConfig && logService.debug('config.js: erro 401 - session timeout?');
+				if (debugConfig) logService.debug('config.js: erro 401 - session timeout?');
 				logout();
 			} else if (response.status == 403) {
 				alert("config.js: erro 403 - Forbidden");

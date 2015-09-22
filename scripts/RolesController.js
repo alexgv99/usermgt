@@ -21,11 +21,11 @@ function Roles($q, $routeParams, logService, selectedUserService, httpService, u
 	function activate() {
 		$q.all([
 			obtainUserRolesRealm().then(function (response) {
-				debugControllers && logService.debug("Roles do usuário no Realm: " + JSON.stringify(response.data, null, '\t'));
+				if (debugControllers) logService.debug("Roles do usuário no Realm: " + JSON.stringify(response.data, null, '\t'));
 				carregaRoles(response.data, 'realm');
 			}),
 			obtainUserRolesClient().then(function (response) {
-				debugControllers && logService.debug("Roles do usuário no Client: " + JSON.stringify(response.data, null, '\t'));
+				if (debugControllers) logService.debug("Roles do usuário no Client: " + JSON.stringify(response.data, null, '\t'));
 				carregaRoles(response.data, 'client');
 			})
 		]).then(function(values) {
