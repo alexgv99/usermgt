@@ -1,18 +1,11 @@
 <h1>Entrei na tela de roles para o user {{ctrl.user.email}}</h1>
 
-<h2>Realm Roles</h2>
-<ul ng-repeat="role in ctrl.realmRoles">
-	<li><input type="checkbox" id="realmRole-{{role.id}}"> <label for="realmRole-{{role.id}}">{{role.name}} {{role.composite ? ' (composta)' : ''}}</label></li>
-</ul>
-
-<h2>Client Roles</h2>
-<ul ng-repeat="role in ctrl.clientRoles">
-	<li><input type="checkbox" id="clientRole-{{role.id}}"> <label for="clientRole-{{role.id}}">{{role.name}} {{role.composite ? ' (composta)' : ''}}</label></li>
-</ul>
-
 <h2>User Roles</h2>
-<ul ng-repeat="role in ctrl.userRoles">
-	<li><input type="checkbox" id="realmMapping-{{role.id}}"> <label for="realmMapping-{{role.id}}">{{role.name}} {{role.composite ? ' (composta)' : ''}}</label></li>
+<ul ng-repeat="role in ctrl.roles">
+	<li>
+		<input type="checkbox" id="realmMapping-{{role.id}}" ng-model="role.checked">
+		<label for="realmMapping-{{role.id}}">{{role.name}} [{{role.context}}] {{ctrl.showFilhas(role)}}</label>
+	</li>
 </ul>
 
 <a href="#/" ng-click="ctrl.resetSelectedUser()">Voltar</a>
