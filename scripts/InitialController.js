@@ -17,6 +17,6 @@ function Initial($scope, $location, httpService, logService) {
 		httpService.loadClient();
 		$scope.usuario = dados;
 		$location.path('/');
-		//		$scope.$apply();
+		$scope.$apply();
 	});
 }
