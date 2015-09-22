@@ -10,8 +10,8 @@
 
 	<link rel="shortcut icon" href="img/favicon.ico">
 
-	<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,400italic,700,700italic,900" rel="stylesheet" type="text/css">
-	<link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css">
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300,300italic,400italic,600,600italic' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css">
 	<link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.css">
 	<link rel="stylesheet" href="css/estilos.css">
 
@@ -32,15 +32,10 @@
 	<script type="text/javascript" src="scripts/UsersController.js"></script>
 </head>
 
-<body ng-app="usermgt-app">
+<body ng-app="usermgt-app" class="controleKey">
 	<header>
 		<div class="login container-fluid" ng-controller="Initial as ctrl">
-			<span class="pull-left">
-				<a href="#/">
-					<img src="img/poa.png" alt="Prefeitura Municipal de Porto Alegre" title="Brasão PMPA" class="pmpa" />
-				</a>
-			</span>
-			<span class="pull-right">
+			<span class="pull-right usuarioKey">
 				Ol&aacute;, <strong>{{usuario.nome}}</strong>&nbsp;&nbsp;&nbsp;<a href="" onclick="logout();">Sair</a> <i class="fa fa-sign-out"></i>
 			</span>
 		</div>
@@ -50,8 +45,8 @@
 	</div>
 
 	<footer class="footer">
-		<div class="container-fluid">
-			<a href="https://www.procempa.com.br" target="_blank">
+		<div class="container-fluid procempaKey">
+			<a href="http://www.procempa.com.br" target="_blank">
 				<img src="https://www.procempa.com.br/img/desenvolvimento_procempa.png" alt="Desenvolvimento: Procempa" />
 			</a>
 		</div>

@@ -1,17 +1,95 @@
 <form>
-	Pesquisa:
-	<input type="text" ng-model="users.pesquisa.nome">
-	<input type="submit" value="Pesquisar" ng-click="users.searchUsers()">
-	<input type="button" value="Mostrar todos os usuários" ng-click="users.obtainRealmUsers()">
+    <div class="input-group pesquisaKey">
+        <input type="text" ng-model="users.pesquisa.nome" class="form-control" placeholder="buscar por nome">
+        <span class="input-group-btn">
+            <button type="submit" class="btn btn-default" ng-click="users.searchUsers()"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+        </span>
+    </div>
 </form>
 
-<ul ng-repeat="user in users.users">
-	<li><a ng-href="#/role/{{user.username}}">{{user.username}} ({{user.email}})</a></li>
-</ul>
 
-<span ng-show="users.realmUsers.length">
-	<h3>Realm Users</h3>
-	<ul ng-repeat="user in users.realmUsers">
-		<li><a ng-href="#/role/{{user.username}}">{{user.username}} ({{user.email}})</a></li>
-	</ul>
-</span>
+<form>
+    Pesquisa:
+    <input type="text" ng-model="users.pesquisa.nome">
+    <input type="submit" value="Pesquisar" ng-click="users.searchUsers()">
+    <input type="button" value="Mostrar todos os usuários" ng-click="users.obtainRealmUsers()">
+</form>
+
+
+<ul ng-repeat="user in users.users">
+    <li><a ng-href="#/role/{{user.username}}">{{user.username}} ({{user.email}})</a></li>
+</ul>
+<div class="botoesKey row">
+    <div class="col-md-12">
+        <div class="pull-right">
+            <button class="btn btn-default" type="submit">cancelar</button>
+            <button class="btn btn-primary escuroKey" type="submit">salvar</button>
+        </div>
+    </div>
+</div>
+<div ng-show="users.realmUsers.length" class="pull-left painelKey-estreito">
+    <p class="tituloKey">Usuários</p>
+    <div class="painelKey listaKey">
+        <form class="pesquisaKey">
+            <div class="input-group">
+                <input type="text" ng-model="users.pesquisa.nome" class="form-control" placeholder="buscar por nome">
+                <span class="input-group-btn">
+                    <button type="submit" class="btn btn-default" ng-click="users.searchUsers()"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+                </span>
+            </div>
+        </form>
+
+        <ul>
+            <li ng-repeat="user in users.realmUsers"><a ng-href="#/role/{{user.username}}"><span class="boldKey">{{user.username}}</span> ({{user.email}})</a></li>
+        </ul>
+    </div>
+</div>
+<div class="pull-left painelKey-largo">
+    <p class="tituloKey">Papéis</p>
+    <div class="painelKey">
+        <div class="row">
+            <div class="col-md-12">
+                <h2 style="margin-left: 24px;">Edição de papéis de {{ctrl.user.email}}</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 papeisKey">
+                <h3>Papéis do reino</h3>
+                <br>
+                <input type="checkbox"> <label>realm-usuario</label><br>
+                <input type="checkbox"> <label>realm-administrador (composta)</label><br>
+                <input type="checkbox"> <label>realm-administrador (composta)</label><br>
+                <ul ng-repeat="role in ctrl.realmRoles">
+                    <li><input type="checkbox" id="realmRole-{{role.id}}"> <label for="realmRole-{{role.id}}">{{role.name}} {{role.composite ? ' (composta)' : ''}}</label></li>
+                </ul>
+            </div>
+            <div class="col-md-6 papeisKey">
+                <h3>Papéis do sistema</h3>
+                <br>
+                <input type="checkbox"> <label>realm-usuario</label><br>
+                <input type="checkbox"> <label>realm-administrador (composta)</label><br>
+                <input type="checkbox"> <label>realm-administrador (composta)</label><br>
+                <ul ng-repeat="role in ctrl.clientRoles">
+                    <li><input type="checkbox" id="clientRole-{{role.id}}"> <label for="clientRole-{{role.id}}">{{role.name}} {{role.composite ? ' (composta)' : ''}}</label></li>
+                </ul>
+            </div>
+            <!--
+<div class="col-md-4 papeisKey">
+<h2>User Roles</h2>
+<br>
+<input type="checkbox"> <label>realm-usuario</label><br>
+<input type="checkbox"> <label>realm-administrador (composta)</label><br>
+<input type="checkbox"> <label>realm-administrador (composta)</label><br>
+<ul ng-repeat="role in ctrl.userRoles">
+<li><input type="checkbox" id="realmMapping-{{role.id}}"> <label for="realmMapping-{{role.id}}">{{role.name}} {{role.composite ? ' (composta)' : ''}}</label></li>
+</ul>
+</div>
+-->
+        </div>
+    </div>
+
+
+</div>
+
+
+
