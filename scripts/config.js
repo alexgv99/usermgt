@@ -4,7 +4,6 @@ var logout = function () {
 	auth.loggedIn = false;
 	auth.authz.logout();
 	auth.authz = null;
-	//	window.location = auth.logoutUrl;
 };
 
 angular
@@ -59,19 +58,10 @@ function configuration($routeProvider, $locationProvider, $httpProvider) {
 	$httpProvider.interceptors.push('authInterceptor');
 }
 
-initialization.$inject = ['$rootScope', '$route', '$location', 'logService', 'keycloakService'];
+initialization.$inject = ['$rootScope', '$location', 'logService', 'keycloakService'];
 
-function initialization($rootScope, $route, $location, log, keycloakService) {
-	$rootScope.$on("$routeChangeStart", function (event, next, current) {
-		if (!next.templateUrl) {
-			$location.path("/user");
-			$rootScope.$broadcast('reload-route');
-		}
-	});
-	$rootScope.$on("reload-route", function (event, next, current) {
-		$route.reload();
-	});
-	log.debug('config.js: Inicializando a página');
+function initialization($rootScope, $location, logService, keycloakService) {
+	logService.debug('config.js: Inicializando a página');
 	var keycloakAuth = new Keycloak('keycloak.json');
 	auth.loggedIn = false;
 	keycloakAuth.init({
@@ -86,7 +76,7 @@ function initialization($rootScope, $route, $location, log, keycloakService) {
 		$rootScope.usuario.login = auth.authz.idTokenParsed.preferred_username;
 		$rootScope.usuario.nome = auth.authz.idTokenParsed.name.trim() || auth.authz.idTokenParsed.preferred_username;
 		$rootScope.$broadcast('carregou-dados-usuario', $rootScope.usuario);
-		log.debug('config.js: Usuário logado: ' + $rootScope.usuario.nome);
+		logService.debug('config.js: Usuário logado: ' + $rootScope.usuario.nome);
 	}).error(function () {
 		alert("failed to login");
 	});
