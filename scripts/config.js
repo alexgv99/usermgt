@@ -13,13 +13,7 @@ angular
 	.factory('authInterceptor', authInterceptor)
 	.factory('errorInterceptor', errorInterceptor)
 	.service('keycloakService', keycloakService)
-	.service('selectedUserService', selectedUserService)
-	.service('realmService', realmService)
-	.service('clientService', clientService)
-	.service('logService', logService)
-	.value('debugConfig', false)
-	.value('debugServices', false)
-	.value('debugControllers', false);
+	.service('logService', logService);
 
 configuration.$inject = ['$locationProvider', '$httpProvider'];
 
@@ -33,10 +27,10 @@ function configuration($locationProvider, $httpProvider) {
 	$httpProvider.interceptors.push('authInterceptor');
 }
 
-initialization.$inject = ['$rootScope', '$location', 'logService', 'keycloakService', 'debugConfig'];
+initialization.$inject = ['$rootScope', '$location', 'logService', 'keycloakService'];
 
-function initialization($rootScope, $location, logService, keycloakService, debugConfig) {
-	if (debugConfig) logService.debug('config.js: Inicializando a página');
+function initialization($rootScope, $location, logService, keycloakService) {
+	logService.debug('config.js: Inicializando a página');
 	var keycloakAuth = new Keycloak('keycloak.json');
 	auth.loggedIn = false;
 	keycloakAuth.init({
@@ -51,18 +45,18 @@ function initialization($rootScope, $location, logService, keycloakService, debu
 		$rootScope.usuario.login = auth.authz.idTokenParsed.preferred_username;
 		$rootScope.usuario.nome = auth.authz.idTokenParsed.name.trim() || auth.authz.idTokenParsed.preferred_username;
 		$rootScope.$broadcast('carregou-dados-usuario', $rootScope.usuario);
-		if (debugConfig) logService.debug('config.js: Usuário logado: ' + $rootScope.usuario.nome);
+		logService.debug('config.js: Usuário logado: ' + $rootScope.usuario.nome);
 	}).error(function () {
 		alert("failed to login");
 	});
 }
 
-authInterceptor.$inject = ['$q', 'logService', 'debugConfig'];
+authInterceptor.$inject = ['$q', 'logService'];
 
-function authInterceptor($q, log, debugConfig) {
+function authInterceptor($q, log) {
 	return {
 		request: function (config) {
-			if (debugConfig) log.debug('config.js: objeto de configuração de request: \n' + JSON.stringify(config, null, "\t"));
+			log.debug('config.js: objeto de configuração de request: \n' + JSON.stringify(config, null, "\t"));
 			var deferred = $q.defer();
 			if (auth && auth.authz && auth.authz.token) {
 				auth.authz.updateToken(5).success(function () {
@@ -78,15 +72,15 @@ function authInterceptor($q, log, debugConfig) {
 	};
 }
 
-errorInterceptor.$inject = ['$q', 'logService', 'debugConfig'];
+errorInterceptor.$inject = ['$q', 'logService'];
 
-function errorInterceptor($q, logService, debugConfig) {
+function errorInterceptor($q, logService) {
 	return function (promise) {
 		return promise.then(function (response) {
 			return response;
 		}, function (response) {
 			if (response.status == 401) {
-				if (debugConfig) logService.debug('config.js: erro 401 - session timeout?');
+				logService.debug('config.js: erro 401 - session timeout?');
 				logout();
 			} else if (response.status == 403) {
 				alert("config.js: erro 403 - Forbidden");
@@ -115,48 +109,6 @@ function keycloakService($localStorage) {
 	};
 	this.reset = function () {
 		delete $localStorage.keycloakObject;
-	};
-}
-
-selectedUserService.$inject = ['$localStorage'];
-
-function selectedUserService($localStorage) {
-	this.set = function (selectedUser) {
-		$localStorage.selectedUser = selectedUser;
-	};
-	this.get = function () {
-		return $localStorage.selectedUser;
-	};
-	this.reset = function () {
-		delete $localStorage.selectedUser;
-	};
-}
-
-realmService.$inject = ['$localStorage'];
-
-function realmService($localStorage) {
-	this.set = function (realm) {
-		$localStorage.realm = realm;
-	};
-	this.get = function () {
-		return $localStorage.realm;
-	};
-	this.reset = function () {
-		delete $localStorage.realm;
-	};
-}
-
-clientService.$inject = ['$localStorage'];
-
-function clientService($localStorage) {
-	this.set = function (client) {
-		$localStorage.client = client;
-	};
-	this.get = function () {
-		return $localStorage.client;
-	};
-	this.reset = function () {
-		delete $localStorage.client;
 	};
 }
 

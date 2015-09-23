@@ -2,44 +2,68 @@ angular
 	.module('usermgt-app')
 	.controller('Users', Users);
 
-Users.$inject = ['$q', 'logService', 'selectedUserService', 'httpService', 'lodash', 'debugControllers'];
+Users.$inject = ['$q', 'logService', 'httpService', 'lodash'];
 
-function Users($q, logService, selectedUserService, httpService, lodash, debugControllers) {
+function Users($q, logService, httpService, lodash) {
 	'use strict';
 
 	var ctrl = this;
-	ctrl.users = [];
 
-	activate();
+	if (httpService.isKeycloakInitialized()) {
+		activate();
+	}
 
 	function activate() {
 		ctrl.users = [];
-		ctrl.pesquisa = {
-			nome: ''
-		};
-		ctrl.obtainRealmUsers = obtainRealmUsers;
-		ctrl.searchUsers = searchUsers;
-
+		ctrl.user = {};
+		ctrl.realm = {};
+		ctrl.client = {};
 		ctrl.realmRoles = [];
 		ctrl.clientRoles = [];
 		ctrl.roles = [];
+		ctrl.pesquisa = {
+			nome: ''
+		};
+		ctrl.searchUsers = searchUsers;
+		ctrl.selectUser = selectUser;
+		ctrl.showFilhas = showFilhas;
 		ctrl.resetSelectedUser = resetSelectedUser;
 
-		$q.all([
-			httpService.obtainRealmRoles().then(function (response) {
-				ctrl.realmRoles = response.data;
-			}),
-			httpService.obtainClientRoles().then(function (response) {
-				ctrl.clientRoles = response.data;
-			})
-		]).then(function () {
+		httpService.loadRealm().then(function (response) {
+			ctrl.realm = response.data;
+		});
+		httpService.loadClient().then(function (response) {
+			ctrl.client = response.data;
+		});
+		httpService.obtainRealmRoles(ctrl.realm).then(function (response) {
+			ctrl.realmRoles = response.data;
+		});
+		httpService.obtainClientRoles(ctrl.client).then(function (response) {
+			ctrl.clientRoles = response.data;
+		});
+
+		logService.debug('Users view ativada');
+	}
+
+	function searchUsers() {
+		return httpService.searchUser(ctrl.pesquisa).then(function (response) {
+				ctrl.users = response.data;
+				logService.debug('UsersController.js - users obtido na pesquisa pelo nome "' + ctrl.pesquisa.nome + '": \n' + JSON.stringify(ctrl.users, null, '\t'));
+		});
+	}
+
+	function selectUser(username) {
+		return httpService.loadUser(username).then(function(response) {
+			ctrl.user = response.data;
+			return response;
+		}).then(function () {
 			$q.all([
-				obtainUserRolesRealm().then(function (response) {
-					if (debugControllers) logService.debug("Roles do usuário no Realm: " + JSON.stringify(response.data, null, '\t'));
+				httpService.obtainUserRolesRealm(ctrl.user).then(function (response) {
+					logService.debug("Roles do usuário no Realm: " + JSON.stringify(response.data, null, '\t'));
 					carregaRoles(response.data, 'realm');
 				}),
-				obtainUserRolesClient().then(function (response) {
-					if (debugControllers) logService.debug("Roles do usuário no Client: " + JSON.stringify(response.data, null, '\t'));
+				httpService.obtainUserRolesClient(ctrl.user, ctrl.client).then(function (response) {
+					logService.debug("Roles do usuário no Client: " + JSON.stringify(response.data, null, '\t'));
 					carregaRoles(response.data, 'client');
 				})
 			]).then(function (values) {
@@ -49,27 +73,6 @@ function Users($q, logService, selectedUserService, httpService, lodash, debugCo
 				});
 			});
 		});
-
-		if (debugControllers) logService.debug('Users view ativada');
-	}
-
-	function searchUsers() {
-		return httpService.searchUser(ctrl.pesquisa).then(
-			function (users) {
-				ctrl.users = users.data;
-				if (debugControllers) logService.debug('UsersController.js - users obtido na pesquisa pelo nome "' + ctrl.pesquisa.nome + '": \n' + JSON.stringify(ctrl.users, null, '\t'));
-			}
-		);
-	}
-
-	function obtainRealmUsers() {
-		return httpService.obtainRealmUsers().then(
-			function (users) {
-				ctrl.users = users.data;
-				ctrl.pesquisa.nome = '';
-				if (debugControllers) logService.debug('UsersController.js - users do realm: \n' + JSON.stringify(ctrl.realmUsers, null, '\t'));
-			}
-		);
 	}
 
 	function carregaRoles(roles, context) {
@@ -83,22 +86,9 @@ function Users($q, logService, selectedUserService, httpService, lodash, debugCo
 		});
 	}
 
-	ctrl.showFilhas = function (role) {
-		var saida = '';
-		if (role.composite) {
-			if (role.filhas) {
-				angular.forEach(role.filhas, function (role, key) {
-					saida += (saida === '' ? '(' : ', ') + role.name;
-				});
-			}
-			saida += ')';
-		}
-		return saida;
-	};
-
 	function obtemRolesFilhas(role) {
 		var filhas = [];
-		obtainCompositesFromRoleName(role).then(function (response) {
+		httpService.obtainCompositesFromRoleName(role).then(function (response) {
 			angular.forEach(response.data, function (roleFilha, key) {
 				roleFilha.context = role.context;
 				if (roleFilha.composite) {
@@ -109,23 +99,23 @@ function Users($q, logService, selectedUserService, httpService, lodash, debugCo
 		});
 		role.filhas = filhas;
 	}
-	//a carga desta roles precisou ficar dentro do controller porque
-	//para carregá-las o usuário selecionado já precisa ter sido carregado,
-	//o que ocorre no "resolve" do $routeProvider
-	function obtainUserRolesRealm() {
-		return httpService.obtainUserRolesRealm();
-	}
 
-	function obtainUserRolesClient() {
-		return httpService.obtainUserRolesClient();
-	}
-
-	function obtainCompositesFromRoleName(role) {
-		return httpService.obtainCompositesFromRoleName(role);
+	function showFilhas(role) {
+		var saida = '';
+		if (role.composite) {
+			if (role.filhas) {
+				angular.forEach(role.filhas, function (role, key) {
+					saida += (saida === '' ? '(' : ', ') + role.name;
+				});
+			}
+			saida += ')';
+		}
+		return saida;
 	}
 
 	function resetSelectedUser() {
-		selectedUserService.reset();
+		ctrl.user = {};
+		ctrl.roles = [];
 	}
 
 }
