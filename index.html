@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt" ng-app="usermgt-app" >
 
 <head>
 	<meta charset="utf-8" />
@@ -28,13 +28,13 @@
 
 	<script type="text/javascript" src="scripts/config.js"></script>
 	<script type="text/javascript" src="scripts/httpService.js"></script>
-	<script type="text/javascript" src="scripts/InitialController.js"></script>
+	<script type="text/javascript" src="scripts/MainController.js"></script>
 	<script type="text/javascript" src="scripts/UsersController.js"></script>
 </head>
 
-<body ng-app="usermgt-app" class="controleKey">
+<body class="controleKey" ng-controller="Main as ctrl">
 	<header>
-		<div class="login container-fluid" ng-controller="Initial as ctrl">
+		<div class="login container-fluid">
 			<span class="pull-right usuarioKey">
 				Ol&aacute;, <strong>{{ctrl.usuario.nome}}</strong>&nbsp;&nbsp;&nbsp;<a href="" onclick="logout();">Sair</a> <i class="fa fa-sign-out"></i>
 			</span>
@@ -42,7 +42,7 @@
 	</header>
 
 	<!--	<div ng-include="'views/user.html'"></div>-->
-	<div class="container-fluid" ng-controller="Users as users">
+	<div class="container-fluid" ng-controller="Users as users" ng-show="ctrl.isKeycloakInitialized()">
 		<div class="botoesKey row">
 			<div class="col-md-12">
 				<div class="pull-right">
@@ -67,7 +67,7 @@
 				</form>
 				<ul>
 					<li ng-repeat="user in users.users">
-						<a ng-href="{{users.selectUser(user.username)}}">
+						<a ng-href="{{users.selectUser(user)}}">
 							<span class="boldKey">{{user.username}}</span> ({{user.email}})
 						</a>
 					</li>

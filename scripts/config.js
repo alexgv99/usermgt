@@ -27,9 +27,9 @@ function configuration($locationProvider, $httpProvider) {
 	$httpProvider.interceptors.push('authInterceptor');
 }
 
-initialization.$inject = ['$rootScope', '$location', 'logService', 'keycloakService'];
+initialization.$inject = ['$rootScope', '$location', 'logService', 'keycloakService', '$document'];
 
-function initialization($rootScope, $location, logService, keycloakService) {
+function initialization($rootScope, $location, logService, keycloakService, $document) {
 	logService.debug('config.js: Inicializando a página');
 	var keycloakAuth = new Keycloak('keycloak.json');
 	auth.loggedIn = false;
@@ -49,14 +49,20 @@ function initialization($rootScope, $location, logService, keycloakService) {
 	}).error(function () {
 		alert("failed to login");
 	});
+	$document.ready(function () {
+		console.log('dentro do .run');
+	});
 }
 
 authInterceptor.$inject = ['$q', 'logService'];
 
 function authInterceptor($q, log) {
 	return {
+		//		response: function(config) {
+		//			console.debug('config.js: objeto de configuração de response: \n' + JSON.stringify(config, null, "\t"));
+		//		},
 		request: function (config) {
-			log.debug('config.js: objeto de configuração de request: \n' + JSON.stringify(config, null, "\t"));
+			//			log.debug('config.js: objeto de configuração de request: \n' + JSON.stringify(config, null, "\t"));
 			var deferred = $q.defer();
 			if (auth && auth.authz && auth.authz.token) {
 				auth.authz.updateToken(5).success(function () {
@@ -116,7 +122,7 @@ logService.$inject = ['$log'];
 
 function logService($log) {
 	this.debug = function (msg) {
-		$log.debug(msg);
+		//$log.debug(msg);
 	};
 	this.info = function (msg) {
 		$log.info(msg);

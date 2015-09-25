@@ -36,12 +36,14 @@ function service($http, logService, keycloakService) {
 	httpService.searchUser = function (parms) {
 		var url = urlBase() + '/users';
 		var json = {
-			params: {
+			"params": {
 				"search": parms.nome
 			}
 		};
 		logService.info('httpService.searchUser: ' + url + '?' + JSON.stringify(json));
-		return $http.get(url, json);
+		return $http.get(url, json).then(function(response) {
+			return response;
+		});
 	};
 
 	httpService.obtainRealmRoles = function () {
@@ -65,11 +67,11 @@ function service($http, logService, keycloakService) {
 	};
 
 	httpService.obtainUserRolesClient = function (user, client) {
-			var url = urlBase() +
-				'/users/' + user.username +
-				'/role-mappings/clients-by-id/' + client.id;
-			logService.info('httpService.obtainUserRolesClient: ' + url);
-			return $http.get(url);
+		var url = urlBase() +
+			'/users/' + user.username +
+			'/role-mappings/clients-by-id/' + client.id;
+		logService.info('httpService.obtainUserRolesClient: ' + url);
+		return $http.get(url);
 	};
 
 	httpService.obtainCompositesFromRoleName = function (role) {
