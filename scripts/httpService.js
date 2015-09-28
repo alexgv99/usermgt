@@ -10,7 +10,10 @@ function service($http, logService, keycloakService) {
 
 	var urlBase = function () {
 		var kc = keycloakService.get();
-		return kc ? kc.authServerUrl + '/admin/realms/' + kc.realm : '';
+		if (kc) {
+			return kc.authServerUrl + '/admin/realms/' + kc.realm;
+		}
+		return "AINDA NÃO TEM A URL DO KEYCLOAK!!!!!";
 	};
 
 	var httpService = {};

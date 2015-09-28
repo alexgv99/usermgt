@@ -24,8 +24,8 @@ function Users($q, logService, httpService, lodash) {
 	ctrl.resetSelectedUser = resetSelectedUser;
 
 	if (httpService.isKeycloakInitialized()) {
-		activate();
 	}
+		activate();
 
 	function activate() {
 		httpService.loadRealm().then(function (response) {
@@ -47,21 +47,21 @@ function Users($q, logService, httpService, lodash) {
 	function searchUsers() {
 		return httpService.searchUser(ctrl.pesquisa).then(function (response) {
 			ctrl.users = response.data;
-			logService.debug('UsersController.js - users obtido na pesquisa pelo nome "' + ctrl.pesquisa.nome + '": \n' + JSON.stringify(ctrl.users, null, '\t'));
+			logService.debug('UsersController.js - users obtido na pesquisa pelo nome "' + ctrl.pesquisa.nome + '"', ctrl.users);
 		});
 	}
 
 	function selectUser(user) {
 		ctrl.user = user;
-		ctrl.selectUser = null;
+		//ctrl.selectUser = null;
 
 		return httpService.obtainUserRolesRealm(ctrl.user).then(function (response) {
-			logService.debug("Roles do usuário no Realm: " + JSON.stringify(response.data, null, '\t'));
+			logService.debug("Roles do usuário no Realm", response.data);
 			carregaRoles(response.data, 'realm');
 			return response;
 		}).then(function () {
 			return httpService.obtainUserRolesClient(ctrl.user, ctrl.client).then(function (response) {
-				logService.debug("Roles do usuário no Client: " + JSON.stringify(response.data, null, '\t'));
+				logService.debug("Roles do usuário no Client", response.data);
 				carregaRoles(response.data, 'client');
 				return response;
 			}).then(function () {

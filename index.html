@@ -67,7 +67,7 @@
 				</form>
 				<ul>
 					<li ng-repeat="user in users.users">
-						<a ng-href="{{users.selectUser(user)}}">
+						<a href="#" ng-click="users.selectUser(user)">
 							<span class="boldKey">{{user.username}}</span> ({{user.email}})
 						</a>
 					</li>

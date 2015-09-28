@@ -10,8 +10,7 @@ angular
 	.module('usermgt-app', ['ui.bootstrap', 'ngRoute', 'ngStorage', 'ngLodash'])
 	.config(configuration)
 	.run(initialization)
-	.factory('authInterceptor', authInterceptor)
-	.factory('errorInterceptor', errorInterceptor)
+	.factory('reqResInterceptor', reqResInterceptor)
 	.service('keycloakService', keycloakService)
 	.service('logService', logService);
 
@@ -23,8 +22,7 @@ function configuration($locationProvider, $httpProvider) {
 		requireBase: false,
 		rewriteLinks: true
 	});
-	$httpProvider.interceptors.push('errorInterceptor');
-	$httpProvider.interceptors.push('authInterceptor');
+	$httpProvider.interceptors.push('reqResInterceptor');
 }
 
 initialization.$inject = ['$rootScope', '$location', 'logService', 'keycloakService', '$document'];
@@ -54,15 +52,12 @@ function initialization($rootScope, $location, logService, keycloakService, $doc
 	});
 }
 
-authInterceptor.$inject = ['$q', 'logService'];
 
-function authInterceptor($q, log) {
+reqResInterceptor.$inject = ['$q', '$location', 'logService'];
+function reqResInterceptor($q, $location, logService) {
 	return {
-		//		response: function(config) {
-		//			console.debug('config.js: objeto de configuração de response: \n' + JSON.stringify(config, null, "\t"));
-		//		},
 		request: function (config) {
-			//			log.debug('config.js: objeto de configuração de request: \n' + JSON.stringify(config, null, "\t"));
+			logService.debug('config.js - requestInterceptor', config);
 			var deferred = $q.defer();
 			if (auth && auth.authz && auth.authz.token) {
 				auth.authz.updateToken(5).success(function () {
@@ -74,35 +69,24 @@ function authInterceptor($q, log) {
 				});
 			}
 			return deferred.promise;
+		},
+		requestError: function (rejection) {
+			logService.debug('config.js - requestErrorInterceptor', rejection);
+			return $q.reject(rejection);
+		},
+		response: function (response) {
+			logService.debug('config.js - responseInterceptor', response);
+			return response || $q.when(response);
+		},
+		responseError: function (rejection) {
+			logService.debug('config.js - responseErrorInterceptor', rejection);
+			if (rejection.status == 0){
+				window.location = $location.protocol()+"://" + $location.host() + ":" + $location.port() + "/";
+			}
+			return $q.reject(rejection);
 		}
 	};
-}
-
-errorInterceptor.$inject = ['$q', 'logService'];
-
-function errorInterceptor($q, logService) {
-	return function (promise) {
-		return promise.then(function (response) {
-			return response;
-		}, function (response) {
-			if (response.status == 401) {
-				logService.debug('config.js: erro 401 - session timeout?');
-				logout();
-			} else if (response.status == 403) {
-				alert("config.js: erro 403 - Forbidden");
-			} else if (response.status == 404) {
-				alert("config.js: erro 404 - Not found");
-			} else if (response.status) {
-				if (response.data && response.data.errorMessage) {
-					alert(response.data.errorMessage);
-				} else {
-					alert("config.js: An unexpected server error has occurred");
-				}
-			}
-			return $q.reject(response);
-		});
-	};
-}
+};
 
 keycloakService.$inject = ['$localStorage'];
 
@@ -121,16 +105,17 @@ function keycloakService($localStorage) {
 logService.$inject = ['$log'];
 
 function logService($log) {
-	this.debug = function (msg) {
-		//$log.debug(msg);
+	this.debug = function (msg, obj) {
+		obj = null;
+		$log.debug(msg + (obj ? ':\n' + JSON.stringify(obj, null, '') : ''));
 	};
-	this.info = function (msg) {
-		$log.info(msg);
+	this.info = function (msg, obj) {
+		$log.info(msg + (obj ? ':\n' + JSON.stringify(obj, null, '\t') : ''));
 	};
-	this.error = function (msg) {
-		$log.error(msg);
+	this.error = function (msg, obj) {
+		$log.error(msg + (obj ? ':\n' + JSON.stringify(obj, null, '\t') : ''));
 	};
-	this.warn = function (msg) {
-		$log.warn(msg);
+	this.warn = function (msg, obj) {
+		$log.warn(msg + (obj ? ':\n' + JSON.stringify(obj, null, '\t') : ''));
 	};
 }
