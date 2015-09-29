@@ -24,10 +24,24 @@ function service($http, logService, keycloakService) {
 		return $http.get(url);
 	};
 
-	httpService.loadClient = function () {
-		var url = urlBase() + '/clients/' + keycloakService.get().clientId;
+	httpService.loadClient = function (client) {
+		var url = urlBase() + '/clients/' + client.id;
 		logService.info('httpService.loadClient: ' + url);
 		return $http.get(url);
+	};
+
+	httpService.selectClient = function () {
+		var url = urlBase() + '/clients';
+		logService.info('httpService.obtainClients: ' + url);
+		return $http.get(url).then(function (response) {
+			var clientOut = null;
+			angular.forEach(response.data, function (client, key) {
+				if (client.clientId === keycloakService.get().clientId) {
+					clientOut = client;
+				}
+			});
+			return httpService.loadClient(clientOut);
+		});
 	};
 
 	httpService.loadUser = function (username) {
@@ -44,7 +58,7 @@ function service($http, logService, keycloakService) {
 			}
 		};
 		logService.info('httpService.searchUser: ' + url + '?' + JSON.stringify(json));
-		return $http.get(url, json).then(function(response) {
+		return $http.get(url, json).then(function (response) {
 			return response;
 		});
 	};
@@ -55,15 +69,15 @@ function service($http, logService, keycloakService) {
 		return $http.get(url);
 	};
 
-	httpService.obtainClientRoles = function () {
-		var url = urlBase() + '/clients/' + keycloakService.get().clientId + '/roles';
+	httpService.obtainClientRoles = function (client) {
+		var url = urlBase() + '/clients/' + client.id + '/roles';
 		logService.info('httpService.obtainClientRoles: ' + url);
 		return $http.get(url);
 	};
 
 	httpService.obtainUserRolesRealm = function (user) {
 		var url = urlBase() +
-			'/users/' + user.username +
+			'/users/' + user.id +
 			'/role-mappings/realm';
 		logService.info('httpService.obtainUserRolesRealm: ' + url);
 		return $http.get(url);
@@ -71,8 +85,8 @@ function service($http, logService, keycloakService) {
 
 	httpService.obtainUserRolesClient = function (user, client) {
 		var url = urlBase() +
-			'/users/' + user.username +
-			'/role-mappings/clients-by-id/' + client.id;
+			'/users/' + user.id +
+			'/role-mappings/clients/' + client.id;
 		logService.info('httpService.obtainUserRolesClient: ' + url);
 		return $http.get(url);
 	};

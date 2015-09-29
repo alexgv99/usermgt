@@ -24,23 +24,23 @@ function Users($q, logService, httpService, lodash) {
 	ctrl.resetSelectedUser = resetSelectedUser;
 
 	if (httpService.isKeycloakInitialized()) {
-	}
 		activate();
+	}
 
 	function activate() {
 		httpService.loadRealm().then(function (response) {
 			ctrl.realm = response.data;
 		});
-		httpService.loadClient().then(function (response) {
-			ctrl.client = response.data;
+		httpService.selectClient().then(function (client) {
+			ctrl.client = client;
+		}).then(function () {
+			httpService.obtainClientRoles(ctrl.client).then(function (response) {
+				ctrl.clientRoles = response.data;
+			});
 		});
-		httpService.obtainRealmRoles(ctrl.realm).then(function (response) {
+		httpService.obtainRealmRoles().then(function (response) {
 			ctrl.realmRoles = response.data;
 		});
-		httpService.obtainClientRoles(ctrl.client).then(function (response) {
-			ctrl.clientRoles = response.data;
-		});
-
 		logService.debug('Users view ativada');
 	}
 
