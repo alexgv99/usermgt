@@ -2,9 +2,9 @@ angular
 	.module('usermgt-app')
 	.factory('httpService', service);
 
-service.$inject = ['$http', 'logService', 'keycloakService'];
+service.$inject = ['$http', '$httpParamSerializer', 'logService', 'keycloakService'];
 
-function service($http, logService, keycloakService) {
+function service($http, $httpParamSerializer, logService, keycloakService) {
 
 	'use strict';
 
@@ -57,10 +57,8 @@ function service($http, logService, keycloakService) {
 				"search": parms.nome
 			}
 		};
-		logService.info('httpService.searchUser: ' + url + '?' + JSON.stringify(json));
-		return $http.get(url, json).then(function (response) {
-			return response;
-		});
+		logService.info('httpService.searchUser: ' + url + '?' + $httpParamSerializer(json));
+		return $http.get(url, json);
 	};
 
 	httpService.obtainRealmRoles = function () {

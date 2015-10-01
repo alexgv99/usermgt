@@ -2,9 +2,9 @@ angular
 	.module('usermgt-app')
 	.controller('Users', Users);
 
-Users.$inject = ['$q', 'logService', 'httpService', 'lodash'];
+Users.$inject = ['logService', 'httpService', 'lodash'];
 
-function Users($q, logService, httpService, lodash) {
+function Users(logService, httpService, lodash) {
 	'use strict';
 
 	var ctrl = this;
