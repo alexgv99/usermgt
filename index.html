@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt" ng-app="usermgt-app" >
 
 <head>
 	<meta charset="utf-8" />
@@ -10,7 +10,7 @@
 
 	<link rel="shortcut icon" href="img/favicon.ico">
 
-	<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,400italic,700,700italic,900" rel="stylesheet" type="text/css">
+	<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300,300italic,400italic,600,600italic' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css">
 	<link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.css">
 	<link rel="stylesheet" href="css/estilos.css">
@@ -28,31 +28,87 @@
 
 	<script type="text/javascript" src="scripts/config.js"></script>
 	<script type="text/javascript" src="scripts/httpService.js"></script>
-	<script type="text/javascript" src="scripts/InitialController.js"></script>
-	<script type="text/javascript" src="scripts/RolesController.js"></script>
+	<script type="text/javascript" src="scripts/MainController.js"></script>
 	<script type="text/javascript" src="scripts/UsersController.js"></script>
 </head>
 
-<body ng-app="usermgt-app">
+<body class="controleKey" ng-controller="Main as ctrl">
 	<header>
-		<div class="login container-fluid" ng-controller="Initial as ctrl">
-			<span class="pull-left">
-				<a href="#/">
-					<img src="img/poa.png" alt="Prefeitura Municipal de Porto Alegre" title="Brasão PMPA" class="pmpa" />
-				</a>
-			</span>
-			<span class="pull-right">
-				Ol&aacute;, <strong>{{usuario.nome}}</strong>&nbsp;&nbsp;&nbsp;<a href="" onclick="logout();">Sair</a> <i class="fa fa-sign-out"></i>
+		<div class="login container-fluid">
+			<span class="pull-right usuarioKey">
+				Ol&aacute;, <strong>{{ctrl.usuario.nome}}</strong>&nbsp;&nbsp;&nbsp;<a href="" onclick="logout();">Sair</a> <i class="fa fa-sign-out"></i>
 			</span>
 		</div>
 	</header>
 
-	<div class="container-fluid" ng-view="">
+	<!--	<div ng-include="'views/user.html'"></div>-->
+	<div class="container-fluid" ng-controller="Users as users" ng-show="ctrl.isKeycloakInitialized()">
+		<div class="botoesKey row">
+			<div class="col-md-5">
+				<div class="pull-left">
+					<p class="tituloKey">Realm: {{users.realm.realm}}</p>
+				</div>
+			</div>
+			<div class="col-md-1">
+				<div class="">
+					<p class="tituloKey">Client: {{users.client.clientId}}</p>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="pull-right">
+					<button class="btn btn-default" type="submit">cancelar</button>
+					<button class="btn btn-primary escuroKey" type="submit">salvar</button>
+				</div>
+			</div>
+		</div>
+		<div class="pull-left painelKey-estreito">
+			<p class="tituloKey">Usuários</p>
+			<div class="painelKey listaKey">
+				<form class="pesquisaKey">
+					<div class="input-group">
+						<input type="text" ng-model="users.pesquisa.nome" class="form-control" placeholder="buscar por nome">
+						<span class="input-group-btn">
+							<button type="submit" class="btn btn-default" ng-click="users.searchUsers()">
+								<span class="glyphicon glyphicon-search" aria-hidden="true">
+								</span>
+							</button>
+						</span>
+					</div>
+				</form>
+				<ul>
+					<li ng-repeat="user in users.users">
+						<a href="#" ng-click="users.selectUser(user)">
+							<span class="boldKey">{{user.username}}</span> ({{user.email}})
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="pull-left painelKey-largo">
+			<p class="tituloKey">Papéis</p>
+			<div class="painelKey">
+				<div class="row">
+					<div class="col-md-12">
+						<h2 style="margin-left: 24px;">Edição de papéis de {{users.user.nome}}</h2>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12 papeisKey">
+						<h3>Papéis do reino</h3>
+						<span ng-repeat="role in users.roles | orderBy: ['-context', '+name']">
+							<input type="checkbox" id="role-{{role.id}}" ng-model="role.checked">
+							<label for="role-{{role.id}}">{{role.name}} [{{role.context}}] {{ctrl.showFilhas(role)}}</label>
+							<br>
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 
 	<footer class="footer">
-		<div class="container-fluid">
-			<a href="https://www.procempa.com.br" target="_blank">
+		<div class="container-fluid procempaKey">
+			<a href="http://www.procempa.com.br" target="_blank">
 				<img src="https://www.procempa.com.br/img/desenvolvimento_procempa.png" alt="Desenvolvimento: Procempa" />
 			</a>
 		</div>

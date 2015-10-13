@@ -2,124 +2,90 @@ angular
 	.module('usermgt-app')
 	.factory('httpService', service);
 
-service.$inject = ['$http', 'logService', 'realmService', 'clientService', 'selectedUserService', 'keycloakService', 'debugServices'];
+service.$inject = ['$http', '$httpParamSerializer', 'logService', 'keycloakService'];
 
-function service($http, logService, realmService, clientService, selectedUserService, keycloakService, debugServices) {
+function service($http, $httpParamSerializer, logService, keycloakService) {
 
 	'use strict';
 
 	var urlBase = function () {
-		return keycloakService.get() ? keycloakService.get().authServerUrl + '/admin/realms/' : '';
+		var kc = keycloakService.get();
+		if (kc) {
+			return kc.authServerUrl + '/admin/realms/' + kc.realm;
+		}
+		return "AINDA NÃO TEM A URL DO KEYCLOAK!!!!!";
 	};
 
 	var httpService = {};
 
 	httpService.loadRealm = function () {
-		var url = urlBase() + keycloakService.get().realm;
-		return $http.get(url).then(function (response) {
-			realmService.set(response.data);
-			if (debugServices) logService.debug('httpService.loadRealm("' + keycloakService.get().realm + '"):\n'+ JSON.stringify(response.data, null, '\t'));
-			return response;
-		});
-	};
-
-	httpService.loadClient = function () {
-		var url = urlBase() + keycloakService.get().realm + '/clients/' + keycloakService.get().clientId;
-		return $http.get(url).then(function (response) {
-			clientService.set(response.data);
-			if (debugServices) logService.debug('httpService.loadClient("' + keycloakService.get().clientId + '"):\n'+ JSON.stringify(response.data, null, '\t'));
-			return response;
-		});
-	};
-
-	httpService.loadUser = function (parms) {
-		var url = urlBase() + keycloakService.get().realm + '/users/' + parms.id;
-		logService.info('httpService.searchUser: ' + url + '?search=' + parms.id);
-		var json = {
-			"search": parms.id
-		};
-		return $http.get(url, {
-			params: json
-		}).then(function (response) {
-			selectedUserService.set(response.data);
-			if (debugServices) logService.debug('httpService.searchUser("' + parms.id + '"):\n'+ JSON.stringify(response.data, null, '\t'));
-			return response;
-		});
-	};
-
-	httpService.searchUser = function (parms) {
-		var url = urlBase() + keycloakService.get().realm + '/users';
-		logService.info('httpService.searchUser: ' + url + '?search=' + parms.nome);
-		var json = {
-			"search": parms.nome
-		};
-		return $http.get(url, { params: json }).then(function(response) {
-			if (debugServices) logService.debug('httpService.searchUser("' + parms.nome + '"):\n'+ JSON.stringify(response.data, null, '\t'));
-			return response;
-		});
-	};
-
-	httpService.obtainRealmUsers = function () {
-		if (urlBase() !== '') {
-			var url = urlBase() + keycloakService.get().realm + '/users';
-			logService.info('httpService.obtainRealmUsers: ' + url);
-			return $http.get(url).then(function(response) {
-			if (debugServices) logService.debug('httpService.obtainRealmUsers:\n'+ JSON.stringify(response.data, null, '\t'));
-			return response;
-		});
-		}
+		var url = urlBase();
+		logService.info('httpService.loadRealm: ' + url);
+		return $http.get(url);
 	};
 
 	httpService.obtainRealmRoles = function () {
-		var url = urlBase() + keycloakService.get().realm + '/roles';
+		var url = urlBase() + '/roles';
 		logService.info('httpService.obtainRealmRoles: ' + url);
-		return $http.get(url).then(function(response) {
-			if (debugServices) logService.debug('httpService.obtainRealmRoles:\n'+ JSON.stringify(response.data, null, '\t'));
-			return response;
-		});
+		return $http.get(url);
 	};
 
-	httpService.obtainClientRoles = function () {
-		var url = urlBase() + keycloakService.get().realm + '/clients/' + clientService.get().clientId + '/roles';
+	httpService.loadClient = function () {
+		var url = urlBase() + '/clients/' + keycloakService.get().clientId;
+		logService.info('httpService.loadClient: ' + url);
+		return $http.get(url);
+	};
+
+	httpService.obtainClientRoles = function (client) {
+		var url = urlBase() + '/clients/' + client.clientId + '/roles';
 		logService.info('httpService.obtainClientRoles: ' + url);
-		return $http.get(url).then(function(response) {
-			if (debugServices) logService.debug('httpService.obtainClientRoles:\n'+ JSON.stringify(response.data, null, '\t'));
-			return response;
-		});
+		return $http.get(url);
 	};
 
-	httpService.obtainUserRolesRealm = function () {
-		var url = urlBase() + keycloakService.get().realm +
-			'/users/' + selectedUserService.get().username +
+	httpService.loadUser = function (username) {
+		var url = urlBase() + '/users/' + username;
+		logService.info('httpService.loadUser: ' + url);
+		return $http.get(url);
+	};
+
+	httpService.searchUser = function (parms) {
+		var url = urlBase() + '/users';
+		var json = {
+			"params": {
+				"search": parms.nome
+			}
+		};
+		logService.info('httpService.searchUser: ' + url + '?' + $httpParamSerializer(json));
+		return $http.get(url, json);
+	};
+
+	httpService.obtainUserRolesRealm = function (user) {
+		var url = urlBase() +
+			'/users/' + user.username +
 			'/role-mappings/realm';
 		logService.info('httpService.obtainUserRolesRealm: ' + url);
-		return $http.get(url).then(function(response) {
-			if (debugServices) logService.debug('httpService.obtainUserRolesRealm:\n'+ JSON.stringify(response.data, null, '\t'));
-			return response;
-		});
+		return $http.get(url);
 	};
 
-	httpService.obtainUserRolesClient = function () {
-		var url = urlBase() + keycloakService.get().realm +
-			'/users/' + selectedUserService.get().username +
-			'/role-mappings/clients-by-id/' + clientService.get().id;
+	httpService.obtainUserRolesClient = function (user, client) {
+		var url = urlBase() +
+			'/users/' + user.username +
+			'/role-mappings/clients/' + client.clientId;
 		logService.info('httpService.obtainUserRolesClient: ' + url);
-		return $http.get(url).then(function(response) {
-			if (debugServices) logService.debug('httpService.obtainUserRolesClient:\n'+ JSON.stringify(response.data, null, '\t'));
-			return response;
-		});
+		return $http.get(url);
 	};
 
-	httpService.obtainCompositesFromRoleName = function(role) {
+	httpService.obtainCompositesFromRoleName = function (role) {
 		var roleName = role.name;
-		var url = urlBase() + keycloakService.get().realm +
-			(role.context === 'client' ? '/clients/' + clientService.get().clientId : '') +
+		var url = urlBase() +
+			(role.context === 'client' ? '/clients/' + keycloakService.get().clientId : '') +
 			'/roles/' + roleName + '/composites';
-		logService.info('httpService.obtainCompositesFromRoleName("' + roleName + '"): ' + url);
-		return $http.get(url).then(function(response) {
-			if (debugServices) logService.debug('httpService.obtainCompositesFromRoleName("' + roleName + '"):\n'+ JSON.stringify(response.data, null, '\t'));
-			return response;
-		});
+		logService.info('httpService.obtainCompositesFromRoleName("' + roleName + '"):\n' + url);
+		return $http.get(url);
+	};
+
+	httpService.isKeycloakInitialized = function () {
+		return keycloakService.get();
 	};
 
 	return httpService;

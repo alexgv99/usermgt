@@ -1,177 +1,144 @@
-.cor::before,
-.cor::after {
-    border-radius: 5px;
-    color: white;
+.controleKey label{
+    font-weight: normal;
 }
-.cor.numero::before {
-    padding: 0 6px;
-    font-weight: bold;
-}
-.cor.texto::after {
-    margin-left: 5px;
-    padding: 0 9px;
+
+.controleKey .panel-heading {
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-weight: bold;
-}
-.AZUL::before {
-    background-color: #1b75bb;
-    content: "5";
-}
-.texto.AZUL::after {
-    background-color: #1b75bb;
-    content: "Não urgente";
-}
-.VERDE::before {
-    background-color: #47B769;
-    content: "4";
-}
-.texto.VERDE::after {
-    background-color: #47B769;
-    content: "Pouco urgente";
-}
-.AMARELO::before {
-    background-color: #F5B717;
-    content: "3";
-}
-.texto.AMARELO::after {
-    background-color: #F5B717;
-    content: "Urgente";
-}
-.LARANJA::before {
-    background-color: #F5871F;
-    content: "2";
-}
-.texto.LARANJA::after {
-    background-color: #F5871F;
-    content: "Muito urgente";
-}
-.VERMELHO::before {
-    background-color: #EE3D5D;
-    content: "1";
-}
-.texto.VERMELHO::after {
-    background-color: #EE3D5D;
-    content: "Emergência";
-}
-.vazio::before {
-    content: url(../img/vazio.png);
-}
-.glyphicon-asterisk:before {
-    color: Red;
-    font-size: xx-small;
-}
-.vmiddle {
-    vertical-align: middle !important;
-}
-.infosecundaria {
-    color: #777;
-    font-size: 0.9em;
-    line-height: 1.5em;
-}
-.segundalinha {
-    font-size: 0.9em;
 }
 
-/* CORES 
-azul: 					#37699b
-cinza texto (preto): 	#4d4d4d
-cinza: 					#bdccd4
-cinza escuro: 			#82939e
-cinza claro (prata): 	#ebf0f2
-*/
-
-
-/*----------- TEMPLATE -----------*/
-
-
-/* Sticky footer styles
--------------------------------------------------- */
-
-html {
-    position: relative;
-    min-height: 100%;
-}
-body {
-    /* Margin bottom by footer height */
-    margin-bottom: 60px;
-}
-.footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    /* Set the fixed height of the footer here */
-    height: 30px;
+.controleKey a {
+    color: #404040;
 }
 
-/*------------- MENU -------------*/
+.controleKey h1, .controleKey .h1 {
+    font-size: 26px;
+}
 
+.controleKey h2, .controleKey .h2{
+    font-size: 24px;
+    font-weight: 200;
+}
 
-/* RODAPÉ -------------------------------------- */
+.controleKey h3, .controleKey .h3{
+    font-size: 20px;
+}
 
-.footer img {
-    margin-top: 10px;
+.controleKey {
+    background-color: #f6f6f6;
+    color: #404040;
+    font-family: 'Source Sans Pro', sans-serif;
 }
-.resumorisco,
-li {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+
+.usuarioKey {
+    margin: 20px 0px 0 0;
 }
-.resumorisco > li {
-    padding-left: 1em;
-    text-indent: -.7em;
-    line-height: 1.6em;
-    margin-right: 2px;
+
+.pesquisaKey{
+    padding: 20px;
 }
-.resumorisco > li > ul > li {
-    text-indent: -2em;
+
+.painelKey {
+    background-color: #fff;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
+    border-radius: 0 !important;
+    border: none !important;
+    padding: 20px;
 }
-.resumorisco li:before {
-    content: "• ";
-    vertical-align: text-bottom;
+
+.painelKey-largo {
+    width: calc(100% - 460px);
 }
-@media print {
-    footer,
-    nav,
-    header,
-    .page-header,
-    .well {
-        display: none;
-    }
-    .cor {
-        font-weight: normal !important;
-        text-transform: none !important;
-        letter-spacing: normal !important;
-    }
-    .cor.numero::before {
-        font-weight: normal !important;
-        text-transform: none !important;
-        letter-spacing: normal !important;
-    }
-    .cor.texto::after {
-        font-weight: regular !important;
-        letter-spacing: normal !important;
-        margin-left: 0 !important;
-        padding: 0 !important;
-        text-transform: normal !important;
-    }
-}
-comprovante {
-    line-height: 1.6em;
-}
-.codbarras {
-    margin-top: 50px;
-}
-.labelgrupos {
-    font-weight: bold;
-    margin-bottom: 0;
-}
-.checkbox-inline.no_indent,
-.checkbox-inline.no_indent+.checkbox-inline.no_indent {
-    margin-left: 0;
+
+.painelKey-estreito{
+    width: 450px;
     margin-right: 10px;
 }
-.checkbox-inline.no_indent:last-child {
-    margin-right: 0;
+
+.listaKey{
+    padding: 0;
+}
+
+.listaKey ul {
+    padding: 0;
+    margin-top: 10px;
+}
+
+.listaKey li {
+    padding: 15px 25px;
+    border-bottom: 1px solid #ececec;
+    list-style: none;
+}
+
+.listaKey li:last-child {
+    border: none;
+}
+
+.tituloKey {
+    margin: 8px 0;
+    text-transform: uppercase;
+    font-size: 0.95em;
+    font-weight: 600;
+}
+
+.papeisKey{
+    border-left: 1px solid #ececec;
+    padding-left: 40px;
+}
+
+.papeisKey:first-child{
+    border-left: none;
+}
+
+@media (max-width: 992px){
+    .papeisKey{
+        border-bottom: 1px solid #ececec;
+        border-left: none;
+    }
+
+    .papeisKey:last-child{
+        border-bottom: none;
+        border-left: none;
+    }
+}
+
+.boldKey{
+    font-weight: 600;
+}
+
+.botoesKey button{
+    border-radius: 0;
+}
+
+.botoesKey {
+    top: 20px;
+    position: relative;
+}
+
+.escuroKey{
+    background: #505050;
+    border-color: #505050;
+}
+
+.escuroKey:hover{
+    background: #757575;
+    border-color: #757575;
+}
+
+.escuroKey:focus{
+    background: #757575;
+    border-color: #757575;
+}
+
+.escuroKey:active{
+    background: red;
+    border-color: #757575;
+}
+
+.procempaKey {
+    margin: 20px 0 20px 0;
+}
+
+.selecaoKey{
+    background-color: #efefef;
+    border-left: 5px solid #505050;
 }
