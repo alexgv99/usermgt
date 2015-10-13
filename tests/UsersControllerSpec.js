@@ -3,20 +3,20 @@ describe('Testes para o userController', function() {
 
 	beforeEach(module('usermgt-app'));
 	beforeEach(module('mocksParaInicializacao'));
-	
+
 	beforeEach(inject(function($controller, _logService_, _httpService_, _$q_, _$rootScope_, _$httpBackend_) {
 		logService = _logService_;
 		httpService = _httpService_;
 		$q = _$q_;
 		$rootScope = _$rootScope_;
 		$httpBackend = _$httpBackend_;
-		userController = $controller('Users');		
+		userController = $controller('Users', {$scope: $rootScope.$new(true)});
 	}));
 
 	describe('Controller é inicializado ...', function() {
 		it('com valores default', function() {
 			expect(userController.users.length).toBe(0);
-			expect(userController.realmUsers.length).toBe(0);
+			expect(userController.realmRoles.length).toBe(0);
 			expect(userController.pesquisa.nome).toBe('');
 		});
 	});

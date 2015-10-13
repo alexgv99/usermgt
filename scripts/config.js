@@ -78,13 +78,13 @@ function reqResInterceptor($q, $location, logService) {
 		},
 		responseError: function (rejection) {
 			logService.debug('config.js - responseErrorInterceptor', rejection);
-			if (rejection.status == 0){
+			if (rejection.status === 0){
 				window.location = $location.protocol()+"://" + $location.host() + ":" + $location.port() + "/";
 			}
 			return $q.reject(rejection);
 		}
 	};
-};
+}
 
 keycloakService.$inject = ['$localStorage'];
 
