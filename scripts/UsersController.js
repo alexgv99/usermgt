@@ -2,9 +2,9 @@ angular
 	.module('usermgt-app')
 	.controller('Users', Users);
 
-Users.$inject = ['logService', 'httpService', 'lodash'];
+Users.$inject = ['$scope', 'logService', 'httpService', 'lodash'];
 
-function Users(logService, httpService, lodash) {
+function Users($scope, logService, httpService, lodash) {
 	'use strict';
 
 	var ctrl = this;
@@ -23,37 +23,59 @@ function Users(logService, httpService, lodash) {
 	ctrl.showFilhas = showFilhas;
 	ctrl.resetSelectedUser = resetSelectedUser;
 
-	if (httpService.isKeycloakInitialized()) {
+	$scope.$on('carregou-dados-usuario', function (event, dados) {
+		logService.debug("MainController.js - tá rodando o evento no controller do login");
 		activate();
-	}
+	});
 
+	//este método é executado pelo evento gerado no login do usuário
 	function activate() {
-		httpService.loadRealm().then(function (response) {
+		httpService.loadRealm()
+		.then(function (response) {
 			ctrl.realm = response.data;
-		});
-		httpService.selectClient().then(function (client) {
-			ctrl.client = client;
-		}).then(function () {
-			httpService.obtainClientRoles(ctrl.client).then(function (response) {
-				ctrl.clientRoles = response.data;
+		})
+		.then(function(response) {
+			httpService.obtainRealmRoles().then(function (response) {
+				ctrl.realmRoles = response.data;
+				angular.forEach(ctrl.realmRoles, function (role, key) {
+					role.context = 'realm';
+					role.checked = false;
+					if (role.composite) {
+						obtemRolesFilhas(role);
+					}
+				});
 			});
 		});
-		httpService.obtainRealmRoles().then(function (response) {
-			ctrl.realmRoles = response.data;
+
+		httpService.loadClient()
+		.then(function (response) {
+			ctrl.client = response.data;
+		})
+		.then(function () {
+			httpService.obtainClientRoles(ctrl.client).then(function (response) {
+				ctrl.clientRoles = response.data;
+				angular.forEach(ctrl.clientRoles, function (role, key) {
+					role.context = 'client';
+					role.checked = false;
+					if (role.composite) {
+						obtemRolesFilhas(role);
+					}
+				});
+			});
 		});
+
 		logService.debug('Users view ativada');
 	}
 
 	function searchUsers() {
 		return httpService.searchUser(ctrl.pesquisa).then(function (response) {
 			ctrl.users = response.data;
-			logService.debug('UsersController.js - users obtido na pesquisa pelo nome "' + ctrl.pesquisa.nome + '"', ctrl.users);
+			//logService.debug('UsersController.js - users obtido na pesquisa pelo nome "' + ctrl.pesquisa.nome + '"', ctrl.users);
 		});
 	}
 
 	function selectUser(user) {
 		ctrl.user = user;
-		//ctrl.selectUser = null;
 
 		return httpService.obtainUserRolesRealm(ctrl.user).then(function (response) {
 			logService.debug("Roles do usuário no Realm", response.data);

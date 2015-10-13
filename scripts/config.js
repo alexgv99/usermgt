@@ -39,16 +39,14 @@ function initialization($rootScope, $location, logService, keycloakService, $doc
 		keycloakService.set(keycloakAuth);
 		var redirectPath = $location.protocol() + ":" + $location.host() + ":" + $location.port() + "/index.html";
 		auth.logoutUrl = keycloakAuth.authServerUrl + "/realms/" + keycloakAuth.realm + "/tokens/logout?redirect_uri=" + redirectPath;
-		$rootScope.usuario = {};
-		$rootScope.usuario.login = auth.authz.idTokenParsed.preferred_username;
-		$rootScope.usuario.nome = auth.authz.idTokenParsed.name.trim() || auth.authz.idTokenParsed.preferred_username;
-		$rootScope.$broadcast('carregou-dados-usuario', $rootScope.usuario);
-		logService.debug('config.js: Usuário logado: ' + $rootScope.usuario.nome);
+		 var usuario = {};
+		usuario.login = auth.authz.idTokenParsed.preferred_username;
+		usuario.nome = auth.authz.idTokenParsed.name.trim() || auth.authz.idTokenParsed.preferred_username;
+		$rootScope.$broadcast('carregou-dados-usuario', usuario);
+		logService.debug('config.js: Usuário logado: ' + usuario.nome);
+		$rootScope.$apply();
 	}).error(function () {
 		alert("failed to login");
-	});
-	$document.ready(function () {
-		console.log('dentro do .run');
 	});
 }
 
@@ -57,7 +55,7 @@ reqResInterceptor.$inject = ['$q', '$location', 'logService'];
 function reqResInterceptor($q, $location, logService) {
 	return {
 		request: function (config) {
-			logService.debug('config.js - requestInterceptor', config);
+			//logService.debug('config.js - requestInterceptor', config);
 			var deferred = $q.defer();
 			if (auth && auth.authz && auth.authz.token) {
 				auth.authz.updateToken(5).success(function () {
@@ -75,7 +73,7 @@ function reqResInterceptor($q, $location, logService) {
 			return $q.reject(rejection);
 		},
 		response: function (response) {
-			logService.debug('config.js - responseInterceptor', response);
+			//logService.debug('config.js - responseInterceptor', response);
 			return response || $q.when(response);
 		},
 		responseError: function (rejection) {
@@ -106,7 +104,6 @@ logService.$inject = ['$log'];
 
 function logService($log) {
 	this.debug = function (msg, obj) {
-		obj = null;
 		$log.debug(msg + (obj ? ':\n' + JSON.stringify(obj, null, '') : ''));
 	};
 	this.info = function (msg, obj) {

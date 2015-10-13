@@ -44,7 +44,17 @@
 	<!--	<div ng-include="'views/user.html'"></div>-->
 	<div class="container-fluid" ng-controller="Users as users" ng-show="ctrl.isKeycloakInitialized()">
 		<div class="botoesKey row">
-			<div class="col-md-12">
+			<div class="col-md-5">
+				<div class="pull-left">
+					<p class="tituloKey">Realm: {{users.realm.realm}}</p>
+				</div>
+			</div>
+			<div class="col-md-1">
+				<div class="">
+					<p class="tituloKey">Client: {{users.client.clientId}}</p>
+				</div>
+			</div>
+			<div class="col-md-6">
 				<div class="pull-right">
 					<button class="btn btn-default" type="submit">cancelar</button>
 					<button class="btn btn-primary escuroKey" type="submit">salvar</button>
@@ -85,7 +95,7 @@
 				<div class="row">
 					<div class="col-md-12 papeisKey">
 						<h3>Papéis do reino</h3>
-						<span ng-repeat="role in users.roles">
+						<span ng-repeat="role in users.roles | orderBy: ['-context', '+name']">
 							<input type="checkbox" id="role-{{role.id}}" ng-model="role.checked">
 							<label for="role-{{role.id}}">{{role.name}} [{{role.context}}] {{ctrl.showFilhas(role)}}</label>
 							<br>

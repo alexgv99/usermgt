@@ -24,24 +24,22 @@ function service($http, $httpParamSerializer, logService, keycloakService) {
 		return $http.get(url);
 	};
 
-	httpService.loadClient = function (client) {
-		var url = urlBase() + '/clients/' + client.id;
+	httpService.obtainRealmRoles = function () {
+		var url = urlBase() + '/roles';
+		logService.info('httpService.obtainRealmRoles: ' + url);
+		return $http.get(url);
+	};
+
+	httpService.loadClient = function () {
+		var url = urlBase() + '/clients/' + keycloakService.get().clientId;
 		logService.info('httpService.loadClient: ' + url);
 		return $http.get(url);
 	};
 
-	httpService.selectClient = function () {
-		var url = urlBase() + '/clients';
-		logService.info('httpService.obtainClients: ' + url);
-		return $http.get(url).then(function (response) {
-			var clientOut = null;
-			angular.forEach(response.data, function (client, key) {
-				if (client.clientId === keycloakService.get().clientId) {
-					clientOut = client;
-				}
-			});
-			return httpService.loadClient(clientOut);
-		});
+	httpService.obtainClientRoles = function (client) {
+		var url = urlBase() + '/clients/' + client.clientId + '/roles';
+		logService.info('httpService.obtainClientRoles: ' + url);
+		return $http.get(url);
 	};
 
 	httpService.loadUser = function (username) {
@@ -61,21 +59,9 @@ function service($http, $httpParamSerializer, logService, keycloakService) {
 		return $http.get(url, json);
 	};
 
-	httpService.obtainRealmRoles = function () {
-		var url = urlBase() + '/roles';
-		logService.info('httpService.obtainRealmRoles: ' + url);
-		return $http.get(url);
-	};
-
-	httpService.obtainClientRoles = function (client) {
-		var url = urlBase() + '/clients/' + client.id + '/roles';
-		logService.info('httpService.obtainClientRoles: ' + url);
-		return $http.get(url);
-	};
-
 	httpService.obtainUserRolesRealm = function (user) {
 		var url = urlBase() +
-			'/users/' + user.id +
+			'/users/' + user.username +
 			'/role-mappings/realm';
 		logService.info('httpService.obtainUserRolesRealm: ' + url);
 		return $http.get(url);
@@ -83,8 +69,8 @@ function service($http, $httpParamSerializer, logService, keycloakService) {
 
 	httpService.obtainUserRolesClient = function (user, client) {
 		var url = urlBase() +
-			'/users/' + user.id +
-			'/role-mappings/clients/' + client.id;
+			'/users/' + user.username +
+			'/role-mappings/clients/' + client.clientId;
 		logService.info('httpService.obtainUserRolesClient: ' + url);
 		return $http.get(url);
 	};
@@ -94,7 +80,7 @@ function service($http, $httpParamSerializer, logService, keycloakService) {
 		var url = urlBase() +
 			(role.context === 'client' ? '/clients/' + keycloakService.get().clientId : '') +
 			'/roles/' + roleName + '/composites';
-		logService.info('httpService.obtainCompositesFromRoleName("' + roleName + '"): ' + url);
+		logService.info('httpService.obtainCompositesFromRoleName("' + roleName + '"):\n' + url);
 		return $http.get(url);
 	};
 
